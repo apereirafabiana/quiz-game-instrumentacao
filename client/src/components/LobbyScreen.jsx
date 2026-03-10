@@ -1,0 +1,85 @@
+import { motion } from "framer-motion";
+import ConnectedPlayersList from "./ConnectedPlayersList";
+import QRJoinCard from "./QRJoinCard";
+
+export default function LobbyScreen({
+  roomCode,
+  players,
+  connectedPlayersCount,
+  joinUrl,
+  networkHint,
+  onStartQuiz,
+  canStartQuiz
+}) {
+  return (
+    <motion.section
+      key="teacher-lobby"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -24 }}
+      transition={{ duration: 0.35 }}
+      className="stage-wrap"
+    >
+      <div className="grid gap-6 xl:grid-cols-[1.18fr,0.82fr]">
+        <div className="glass-panel relative overflow-hidden p-6 sm:p-8 lg:p-10">
+          <div className="floating-orb left-[-5rem] top-[-4rem] h-40 w-40 bg-brand-cyan/25" />
+          <div className="floating-orb bottom-[-4rem] right-[-4rem] h-44 w-44 bg-brand-rose/20" />
+
+          <div className="relative z-10 flex h-full flex-col gap-8">
+            <div className="max-w-3xl">
+              <p className="muted-label">Lobby do professor</p>
+              <h1 className="headline-font mt-4 max-w-[13ch] text-4xl font-black leading-[0.95] text-white sm:text-5xl xl:text-6xl">
+                Sala pronta para receber jogadores.
+              </h1>
+              <p className="mt-4 max-w-2xl text-base text-slate-200 sm:text-lg">
+                Mostre o QR Code, acompanhe a entrada da turma e inicie quando todos estiverem prontos.
+              </p>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1.15fr,0.85fr]">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-950/35 p-5 sm:p-6">
+                <p className="muted-label">Codigo da sala</p>
+                <p className="display-code mt-5">{roomCode}</p>
+                <p className="mt-4 text-sm text-slate-300">
+                  Os alunos tambem podem entrar digitando esse codigo manualmente.
+                </p>
+              </div>
+
+              <div className="rounded-[2rem] border border-white/10 bg-slate-950/35 p-5 sm:p-6">
+                <p className="muted-label">Conectados</p>
+                <p className="mt-5 text-6xl font-black text-white">{connectedPlayersCount}</p>
+                <p className="mt-3 text-sm text-slate-300">
+                  jogador{connectedPlayersCount === 1 ? "" : "es"} online no momento.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-white/10 bg-slate-950/25 p-5 sm:p-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pronto para comecar</p>
+                  <p className="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
+                    Quando a lista de participantes estiver certa, inicie o quiz e o telao muda para a primeira pergunta.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={onStartQuiz}
+                  disabled={!canStartQuiz}
+                  className="primary-button min-w-[16rem]"
+                >
+                  Iniciar quiz
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid auto-rows-fr gap-6">
+          <QRJoinCard joinUrl={joinUrl} roomCode={roomCode} networkHint={networkHint} />
+          <ConnectedPlayersList players={players} />
+        </div>
+      </div>
+    </motion.section>
+  );
+}

@@ -1,0 +1,55 @@
+import { AnimatePresence, motion } from "framer-motion";
+
+export default function ConnectedPlayersList({ players }) {
+  return (
+    <div className="glass-panel p-5 sm:p-6">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="muted-label">Participantes</p>
+          <h3 className="headline-font mt-2 text-2xl font-black text-white">
+            Jogadores conectados
+          </h3>
+        </div>
+        <span className="player-badge">{players.length} online</span>
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <AnimatePresence>
+          {players.map((player, index) => (
+            <motion.div
+              key={player.id}
+              initial={{ opacity: 0, y: 16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ delay: index * 0.04, duration: 0.25 }}
+              className="rounded-3xl border border-white/10 bg-slate-950/40 px-4 py-3"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-cyan/40 to-brand-rose/40 text-base font-black text-white">
+                    {player.name.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-white">{player.name}</p>
+                    <p className="text-sm text-slate-300">
+                      {player.connected ? "Pronto para jogar" : "Reconectando"}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-slate-200">
+                  #{player.position}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {players.length === 0 ? (
+        <div className="mt-5 rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-8 text-center text-slate-300">
+          O lobby esta esperando os primeiros alunos entrarem.
+        </div>
+      ) : null}
+    </div>
+  );
+}
