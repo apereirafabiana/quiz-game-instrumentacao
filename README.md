@@ -1,6 +1,6 @@
 # Quiz Arena
 
-Aplicativo web de quiz multiplayer em tempo real com experiencia inspirada em game show, pensado para uso em sala de aula com professor no telao e alunos no celular.
+Aplicativo web de quiz multiplayer em tempo real para sala de aula, com professor no telao e alunos entrando pelo celular. Em producao, frontend, backend e Socket.IO rodam no mesmo dominio e no mesmo servico.
 
 ## Stack
 
@@ -16,51 +16,32 @@ Aplicativo web de quiz multiplayer em tempo real com experiencia inspirada em ga
 ### Backend
 - Node.js
 - Express
-- Socket.io
+- Socket.IO
 
-### Estado e dados
-- armazenamento em memoria
-- estrutura modular pronta para futura persistencia
-- 10 perguntas de exemplo incluidas em `shared/sampleQuestions.js`
+## Como o deploy ficou
 
-## Estrutura do projeto
+- em desenvolvimento, o Vite roda em `5173` e faz proxy de `/api` e `/socket.io` para o Express em `3001`
+- em producao, o build do React vai para `server/public`
+- o Express serve os arquivos estaticos do frontend
+- o Socket.IO roda no mesmo servidor HTTP
+- tudo usa a mesma porta definida por `PORT`
+- professor e alunos compartilham um unico link publico
+
+## Estrutura principal
 
 ```txt
 quiz-game-instrumetacao/
   client/
-    src/
-      components/
-      data/
-      hooks/
-      lib/
-      routes/
-      styles/
   server/
-    src/
-      game/
-      utils/
   shared/
+  .env.example
+  render.yaml
   README.md
 ```
 
-## Funcionalidades entregues
+## Rodando localmente
 
-- criacao automatica de sala com codigo curto e legivel
-- entrada de alunos por QR Code ou codigo manual
-- fluxo por etapas: lobby, pergunta, ranking, final
-- sincronizacao em tempo real com Socket.io
-- timeout de 30 segundos por pergunta
-- encerramento automatico quando todos os conectados respondem
-- pontuacao por acerto e velocidade
-- ranking parcial entre perguntas
-- podio final com visual comemorativo
-- reconexao basica de professor e aluno com `localStorage`
-- bloqueio de multiplas respostas na mesma pergunta
-- layout responsivo para celular e visual forte para projecao
-
-## Como instalar
-
-Prerequisito recomendado: Node.js 18+.
+### 1. Instalar dependencias
 
 Na raiz do projeto:
 
@@ -68,95 +49,202 @@ Na raiz do projeto:
 npm install
 ```
 
-## Como rodar localmente
-
-Na raiz do projeto:
+### 2. Subir em desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-Esse comando sobe:
+Isso sobe:
 - frontend Vite em `http://localhost:5173`
-- backend Express + Socket.io em `http://localhost:3001`
+- backend Express + Socket.IO em `http://localhost:3001`
 
-## Como acessar
+### 3. Abrir o app
 
-### Professor
-Abra no navegador:
+Professor:
 
 ```txt
 http://localhost:5173/
 ```
 
-Para testar com celulares na mesma rede, prefira abrir usando o IP da maquina:
+Para testes com celulares na mesma rede, prefira abrir com o IP da maquina:
 
 ```txt
 http://SEU-IP-LOCAL:5173/
 ```
 
-### Aluno
-Os alunos entram por:
+## Testando modo producao localmente
 
-```txt
-http://SEU-IP-LOCAL:5173/join
-```
-
-Ou diretamente pelo QR Code gerado na tela do professor.
-
-## Teste na mesma rede
-
-1. Conecte professor e celulares no mesmo Wi-Fi.
-2. Rode `npm run dev` na maquina do professor.
-3. Descubra o IP local da maquina.
-4. Abra a tela do professor em `http://SEU-IP-LOCAL:5173/`.
-5. Projete a tela.
-6. Os alunos entram pelo QR Code ou digitando o codigo da sala em `http://SEU-IP-LOCAL:5173/join`.
-
-## Fluxo do jogo
-
-1. O professor abre a tela principal.
-2. Uma sala e criada automaticamente.
-3. O lobby exibe codigo, QR Code, lista de jogadores e botao de iniciar.
-4. Os alunos entram pelo celular.
-5. O professor inicia o quiz.
-6. A pergunta aparece no telao com timer e barra regressiva.
-7. Os alunos respondem no smartphone.
-8. A pergunta encerra no tempo ou antes, se todos responderem.
-9. O ranking parcial aparece com animacao.
-10. O jogo avanca automaticamente para a proxima pergunta.
-11. Ao final, o podio final aparece.
-
-## Regras implementadas
-
-- nomes vazios sao bloqueados
-- nomes duplicados recebem sufixo automatico
-- novas entradas ficam bloqueadas depois que o quiz comeca
-- jogadores existentes podem reconectar usando a mesma sessao
-- respostas erradas valem 0
-- respostas corretas usam formula baseada em tempo
-
-## Formula de pontuacao
-
-```txt
-score = 1000 * max(0.25, tempoRestante / tempoTotal)
-```
-
-- resposta correta: entre 250 e 1000 pontos
-- resposta errada: 0 pontos
-
-## Scripts uteis
-
-Na raiz:
+### 1. Gerar o build
 
 ```bash
-npm run dev
 npm run build
-npm run start
 ```
 
-## Observacoes
+### 2. Iniciar o servidor de producao
 
-- os dados ficam somente em memoria; ao reiniciar o servidor, as salas sao perdidas
-- a deteccao do link de entrada para o QR Code usa o IP local do servidor quando possivel
-- se quiser forcar o endereco publico do frontend, defina `CLIENT_PUBLIC_URL` antes de iniciar o servidor
+```bash
+npm start
+```
+
+### 3. Abrir no navegador
+
+```txt
+http://localhost:3001/
+```
+
+Nesse modo, o React ja sai servido pelo Express, igual ao deploy no Render.
+
+## Variaveis de ambiente
+
+### Obrigatorias
+
+- `PORT`
+  - porta HTTP publica do servico
+  - no Render ela e fornecida automaticamente
+- `NODE_ENV`
+  - use `production` no Render
+  - use `development` localmente
+
+### Opcionais
+
+- `CLIENT_PORT`
+  - usada apenas para sugestao de link de rede local no desenvolvimento
+  - padrao: `5173`
+- `PUBLIC_BASE_URL`
+  - forca a URL publica usada no QR Code
+  - normalmente nao precisa no Render
+
+Veja os exemplos em `.env.example`.
+
+## Deploy no GitHub
+
+### 1. Criar repositorio
+
+No GitHub, crie um repositorio novo vazio.
+
+### 2. Enviar este projeto
+
+Na pasta do projeto:
+
+```bash
+git init
+git add .
+git commit -m "Prepare project for Render deploy"
+git branch -M main
+git remote add origin https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
+git push -u origin main
+```
+
+Se o repositorio ja existir, basta fazer `git add`, `git commit` e `git push`.
+
+## Deploy no Render
+
+### Opcao mais simples: Web Service manual
+
+1. Entre no painel do Render.
+2. Clique em `New` > `Web Service`.
+3. Conecte sua conta do GitHub, se ainda nao conectou.
+4. Escolha este repositorio.
+5. Preencha os campos assim:
+
+- `Name`: o nome que voce quiser, por exemplo `quiz-arena`
+- `Root Directory`: deixe vazio
+- `Runtime`: `Node`
+- `Build Command`: `npm install && npm run build`
+- `Start Command`: `npm start`
+- `Health Check Path`: `/health`
+
+### Variaveis de ambiente no Render
+
+Configure pelo menos:
+
+- `NODE_ENV` = `production`
+
+Observacoes:
+- `PORT` nao precisa ser criado manualmente; o Render fornece esse valor automaticamente
+- `PUBLIC_BASE_URL` normalmente nao e necessario, porque o servidor descobre a propria URL publica
+
+### Publicar
+
+1. Clique em `Create Web Service`.
+2. Espere o build terminar.
+3. Quando o status ficar `Live`, o Render mostra a URL publica do servico.
+4. Esse unico link sera usado por professor e alunos.
+
+Exemplo de link final:
+
+```txt
+https://quiz-arena.onrender.com
+```
+
+Professor acessa:
+
+```txt
+https://quiz-arena.onrender.com/
+```
+
+Alunos entram pelo QR Code ou por:
+
+```txt
+https://quiz-arena.onrender.com/join
+```
+
+## Opcao com render.yaml
+
+O projeto tambem inclui um `render.yaml`. Se voce preferir usar Blueprint:
+
+1. No Render, clique em `New` > `Blueprint`.
+2. Selecione o repositorio.
+3. Revise o servico criado a partir do `render.yaml`.
+4. Confirme o deploy.
+
+## Build e start finais
+
+Na raiz do projeto:
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+## Como funciona em producao
+
+- o Render entrega um unico dominio publico
+- o Express responde frontend e backend
+- o Socket.IO usa o mesmo dominio e a mesma porta
+- o QR Code aponta para o mesmo link publico
+- nao ha dependencia de `localhost` em producao
+
+## Teste no celular depois do deploy
+
+1. Abra o link publico no notebook do professor.
+2. Projete a tela.
+3. Leia o QR Code com o celular.
+4. Se preferir, abra manualmente o link `/join` no celular.
+5. Responda uma pergunta para verificar o tempo real.
+
+## Modo gratuito do Render
+
+Segundo a documentacao oficial do Render, web services gratuitos entram em idle depois de 15 minutos sem trafego e voltam a subir quando recebem uma nova requisicao. Isso pode causar uma demora inicial na primeira abertura do link. O Render tambem informa que os web services gratuitos recebem uma URL publica `onrender.com` e suportam WebSockets.
+
+## Arquivos importantes para deploy
+
+- `package.json`
+- `client/vite.config.js`
+- `client/src/lib/api.js`
+- `client/src/hooks/useSocket.js`
+- `server/src/index.js`
+- `.env.example`
+- `render.yaml`
+
+## Fluxo do quiz preservado
+
+O deploy em producao preserva:
+- lobby com QR Code e codigo da sala
+- entrada dos alunos pelo celular
+- perguntas em tempo real
+- ranking parcial entre rodadas
+- ranking final com podio
+- comunicacao via Socket.IO

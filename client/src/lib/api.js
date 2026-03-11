@@ -1,12 +1,3 @@
-const browserProtocol =
-  typeof window !== "undefined" && window.location.protocol === "https:"
-    ? "https"
-    : "http";
-const browserHost = typeof window !== "undefined" ? window.location.hostname : "localhost";
-
-export const API_BASE_URL =
-  import.meta.env.VITE_SERVER_URL ?? `${browserProtocol}://${browserHost}:3001`;
-
 function normalizeBaseUrl(url) {
   if (!url) {
     return "";
@@ -14,6 +5,11 @@ function normalizeBaseUrl(url) {
 
   return /^https?:\/\//i.test(url) ? url : `http://${url}`;
 }
+
+export const API_BASE_URL =
+  import.meta.env.DEV && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "";
 
 export async function fetchServerMeta() {
   const response = await fetch(`${API_BASE_URL}/api/meta`);
