@@ -87,9 +87,7 @@ export default function QuestionDisplay({
                 <p className="headline-font mt-3 text-2xl font-black text-white sm:text-3xl">
                   Alternativa {correctLetter}
                 </p>
-                <p className="mt-3 text-sm text-emerald-50/85 sm:text-base">
-                  A resposta correta fica em destaque. Comente com a turma e avance quando quiser.
-                </p>
+
               </div>
             ) : (
               <TimerBar deadlineAt={question.deadlineAt} durationMs={question.durationMs} />
@@ -112,7 +110,7 @@ export default function QuestionDisplay({
         <div className="flex flex-col items-center gap-4">
           <div className="rounded-full border border-white/10 bg-white/10 px-5 py-3 text-base font-semibold text-slate-100">
             {showCorrectAnswer
-              ? "Professor no controle: avance para o ranking quando terminar o comentário."
+              ? "Professor no controle: avance para o ranking quando terminar o comentÃ¡rio."
               : `${answeredCount} de ${totalPlayers} responderam`}
           </div>
           <button type="button" onClick={onForceContinue} className="secondary-button">
