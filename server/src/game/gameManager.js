@@ -3,6 +3,7 @@ import {
   QUESTION_THEMES,
   getQuestionsForTheme
 } from "../../../shared/sampleQuestions.js";
+import { DEFAULT_AVATAR, normalizeAvatar } from "../../../shared/avatarOptions.js";
 import {
   buildQuestionPayload,
   getCurrentQuestion,
@@ -12,13 +13,13 @@ import {
 import { buildRanking, calculateAnswerScore } from "./scoring.js";
 import { generateRoomCode } from "../utils/generateRoomCode.js";
 
-const ANSWER_REVEAL_MS = 4000;
 const RANKING_DISPLAY_MS = 6500;
 
-function createPlayer({ id, name, socketId }) {
+function createPlayer({ id, name, avatar, socketId }) {
   return {
     id,
     name,
+    avatar,
     socketId,
     connected: true,
     score: 0,
@@ -153,6 +154,7 @@ export function createGameManager({ io, roomStore }) {
       player: {
         id: player.id,
         name: player.name,
+        avatar: player.avatar,
         score: player.score,
         position: playerPosition,
         hasAnsweredCurrentQuestion: Boolean(answerForCurrentQuestion)
@@ -334,24 +336,20 @@ export function createGameManager({ io, roomStore }) {
 
     room.state = "answer_reveal";
     room.currentQuestionEndsAt = null;
-    scheduleTransition(room, ANSWER_REVEAL_MS, () => {
-      showRanking(room.code);
-    });
+    room.transitionEndsAt = null;
 
     emitRoomEvent(room.code, "question_ended", {
       roomCode: room.code,
       reason,
       questionId: currentQuestion?.id ?? null,
       correctIndex: currentQuestion?.correctIndex ?? null,
-      revealEndsAt: room.transitionEndsAt,
       ranking
     });
 
     emitRoomEvent(room.code, "answer_revealed", {
       roomCode: room.code,
       questionId: currentQuestion?.id ?? null,
-      correctIndex: currentQuestion?.correctIndex ?? null,
-      revealEndsAt: room.transitionEndsAt
+      correctIndex: currentQuestion?.correctIndex ?? null
     });
 
     syncRoomState(room.code);
@@ -376,9 +374,10 @@ export function createGameManager({ io, roomStore }) {
     return room;
   }
 
-  function joinPlayer(socket, { roomCode, name, playerId }) {
+  function joinPlayer(socket, { roomCode, name, avatar, playerId }) {
     const room = getRoomOrThrow(roomCode);
     const normalizedName = clampName(name);
+    const normalizedAvatar = normalizeAvatar(avatar);
 
     if (!normalizedName && !playerId) {
       const error = new Error("Informe um nome para entrar.");
@@ -403,12 +402,14 @@ export function createGameManager({ io, roomStore }) {
 
     if (player) {
       player.name = ensureUniquePlayerName(room, normalizedName || player.name, player.id);
+      player.avatar = normalizedAvatar || player.avatar || DEFAULT_AVATAR;
       roomStore.setPlayerSocket(room.code, player.id, socket.id);
     } else {
       const newPlayerId = generatePlayerId();
       player = createPlayer({
         id: newPlayerId,
         name: ensureUniquePlayerName(room, normalizedName),
+        avatar: normalizedAvatar || DEFAULT_AVATAR,
         socketId: socket.id
       });
       room.players.set(player.id, player);
@@ -420,14 +421,16 @@ export function createGameManager({ io, roomStore }) {
     socket.emit("join_success", {
       roomCode: room.code,
       playerId: player.id,
-      playerName: player.name
+      playerName: player.name,
+      playerAvatar: player.avatar
     });
 
     emitRoomEvent(room.code, "player_joined", {
       roomCode: room.code,
       player: {
         id: player.id,
-        name: player.name
+        name: player.name,
+        avatar: player.avatar
       }
     });
 

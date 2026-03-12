@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
 
 const CONFETTI = [
   { left: "6%", delay: 0.1, color: "bg-brand-cyan" },
@@ -14,33 +15,76 @@ const CONFETTI = [
   { left: "88%", delay: 0.18, color: "bg-brand-cyan" }
 ];
 
-function PodiumBlock({ entry, heightClass, tintClass, playerId }) {
+const PODIUM_STYLES = {
+  1: {
+    label: "Campeão",
+    trophy: "🏆",
+    heightClass: "h-64",
+    cardClass: "from-amber-300/38 via-yellow-400/24 to-amber-700/12 border-amber-200/45",
+    glowClass: "shadow-[0_28px_70px_rgba(245,158,11,0.34)] ring-2 ring-amber-200/35",
+    pedestalClass: "from-amber-300/35 via-yellow-400/20 to-amber-700/20",
+    trophyClass: "text-amber-200"
+  },
+  2: {
+    label: "Vice",
+    trophy: "🏆",
+    heightClass: "h-52",
+    cardClass: "from-slate-200/22 via-slate-300/12 to-slate-500/10 border-slate-200/25",
+    glowClass: "shadow-[0_20px_50px_rgba(203,213,225,0.18)]",
+    pedestalClass: "from-slate-200/25 via-slate-300/12 to-slate-600/20",
+    trophyClass: "text-slate-100"
+  },
+  3: {
+    label: "Top 3",
+    trophy: "🏆",
+    heightClass: "h-44",
+    cardClass: "from-orange-400/28 via-amber-500/14 to-orange-900/12 border-orange-300/25",
+    glowClass: "shadow-[0_18px_44px_rgba(249,115,22,0.18)]",
+    pedestalClass: "from-orange-300/25 via-amber-500/12 to-orange-900/18",
+    trophyClass: "text-orange-100"
+  }
+};
+
+function PodiumColumn({ entry, playerId }) {
   if (!entry) {
     return null;
   }
 
+  const style = PODIUM_STYLES[entry.position] ?? PODIUM_STYLES[3];
   const isCurrentPlayer = entry.id === playerId;
 
   return (
     <div className="flex flex-1 flex-col items-center justify-end gap-4">
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`w-full rounded-[2rem] border px-4 py-6 text-center ${
+        initial={{ opacity: 0, y: 30, scale: 0.94 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.42 }}
+        className={`w-full rounded-[2.2rem] border bg-gradient-to-br px-5 py-6 text-center ${style.cardClass} ${style.glowClass} ${
           isCurrentPlayer ? "ring-2 ring-brand-cyan" : ""
-        } ${tintClass}`}
+        }`}
       >
-        <p className="headline-font text-2xl font-black text-white">{entry.name}</p>
-        <p className="mt-2 text-base font-semibold text-slate-100">{entry.score} pts</p>
-        <p className="mt-1 text-sm text-slate-300">{entry.correctAnswers} acertos</p>
+        <div className={`mx-auto text-5xl drop-shadow-[0_14px_26px_rgba(15,23,42,0.24)] ${style.trophyClass}`}>
+          {style.trophy}
+        </div>
+        <div className="mx-auto mt-4 flex h-20 w-20 items-center justify-center rounded-[1.8rem] border border-white/15 bg-white/10 text-5xl shadow-[0_14px_30px_rgba(15,23,42,0.18)]">
+          {entry.avatar ?? DEFAULT_AVATAR}
+        </div>
+        <p className="mt-4 text-xs font-black uppercase tracking-[0.28em] text-slate-100/80">
+          {style.label}
+        </p>
+        <p className="headline-font mt-3 text-2xl font-black text-white sm:text-3xl">{entry.name}</p>
+        <p className="mt-3 text-lg font-black text-white">{entry.score} pts</p>
+        <p className="mt-1 text-sm text-slate-200/80">{entry.correctAnswers} acertos</p>
       </motion.div>
+
       <motion.div
         initial={{ scaleY: 0.3, opacity: 0 }}
         animate={{ scaleY: 1, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className={`flex w-full origin-bottom items-center justify-center rounded-t-[2rem] border border-white/10 bg-white/10 text-4xl font-black text-white ${heightClass}`}
+        transition={{ duration: 0.42, delay: 0.06 }}
+        className={`flex w-full origin-bottom flex-col items-center justify-center rounded-t-[2.2rem] border border-white/10 bg-gradient-to-b px-4 py-4 text-white ${style.pedestalClass} ${style.heightClass}`}
       >
-        {entry.position}
+        <span className="text-sm font-bold uppercase tracking-[0.3em] text-white/80">Lugar</span>
+        <span className="headline-font mt-2 text-5xl font-black">{entry.position}º</span>
       </motion.div>
     </div>
   );
@@ -81,39 +125,24 @@ export default function FinalPodium({
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-6">
         <div className="text-center">
           <p className="muted-label">Fim de jogo</p>
-          <h1 className="projection-title mt-4">Podio final</h1>
+          <h1 className="projection-title mt-4">Pódio final</h1>
           <p className="mt-4 text-lg text-slate-200">
-            O quiz terminou com um clima de competicao pronto para sala de aula.
+            A partida terminou em clima de competição, com destaque total para os três melhores colocados.
           </p>
         </div>
 
         <div className="glass-panel overflow-hidden p-5 sm:p-8">
-          <div className="grid gap-4 md:grid-cols-3 md:items-end">
-            <PodiumBlock
-              entry={second}
-              heightClass="h-40"
-              tintClass="border-slate-200/20 bg-slate-200/10"
-              playerId={playerId}
-            />
-            <PodiumBlock
-              entry={first}
-              heightClass="h-52"
-              tintClass="border-amber-200/30 bg-amber-300/12"
-              playerId={playerId}
-            />
-            <PodiumBlock
-              entry={third}
-              heightClass="h-32"
-              tintClass="border-orange-200/20 bg-orange-300/10"
-              playerId={playerId}
-            />
+          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3 md:items-end">
+            <PodiumColumn entry={second} playerId={playerId} />
+            <PodiumColumn entry={first} playerId={playerId} />
+            <PodiumColumn entry={third} playerId={playerId} />
           </div>
         </div>
 
         <div className="glass-panel p-5 sm:p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="muted-label">Demais colocacoes</p>
+              <p className="muted-label">Demais colocações</p>
               <h3 className="headline-font mt-2 text-2xl font-black text-white">
                 Ranking completo
               </h3>
@@ -136,9 +165,14 @@ export default function FinalPodium({
                     <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sm font-black text-white">
                       {entry.position}
                     </span>
-                    <div>
-                      <p className="text-base font-bold text-white">{entry.name}</p>
-                      <p className="text-sm text-slate-300">{entry.correctAnswers} acertos</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-2xl">
+                        {entry.avatar ?? DEFAULT_AVATAR}
+                      </div>
+                      <div>
+                        <p className="text-base font-bold text-white">{entry.name}</p>
+                        <p className="text-sm text-slate-300">{entry.correctAnswers} acertos</p>
+                      </div>
                     </div>
                   </div>
                   <p className="text-lg font-black text-white">{entry.score} pts</p>
@@ -146,7 +180,7 @@ export default function FinalPodium({
               ))
             ) : (
               <div className="rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center text-slate-300">
-                So houve tres participantes nesta rodada.
+                Só houve três participantes nesta rodada.
               </div>
             )}
           </div>

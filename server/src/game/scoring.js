@@ -36,6 +36,7 @@ export function buildRanking(players) {
     .map((player, index) => ({
       id: player.id,
       name: player.name,
+      avatar: player.avatar,
       score: player.score,
       correctAnswers: player.correctAnswers,
       connected: player.connected,

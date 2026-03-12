@@ -10,12 +10,12 @@ export const quizQuestionsByTheme = {
       question:
         "De acordo com o material, qual foi o marco principal da 1ª Revolução Industrial iniciada na Inglaterra por volta de 1765?",
       options: [
-        "A descoberta da energia nuclear e o surgimento de computadores",
-        "O surgimento da eletricidade e do petróleo como novas formas de energia",
-        "A interconexão de todas as etapas de produção através da digitalização",
-        "A mecanização dos processos e a invenção de máquinas a vapor"
+        "A descoberta da energia nuclear e o surgimento de computadores.",
+        "O surgimento da eletricidade e do petróleo como novas formas de energia.",
+        "A interconexão de todas as etapas de produção através da digitalização.",
+        "A mecanização dos processos e a invenção de máquinas a vapor."
       ],
-      correctIndex: 3,
+      correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
     },
     {
@@ -23,9 +23,9 @@ export const quizQuestionsByTheme = {
       question:
         "Qual é a principal característica que define a Indústria 4.0 em relação às revoluções anteriores?",
       options: [
-        "A introdução das linhas de montagem baseadas no Fordismo",
-        "A interconexão de etapas produtivas e a utilização de dados para eficiência",
-        "A substituição total de funcionários humanos por robôs autônomos",
+        "A introdução das linhas de montagem baseadas no Fordismo.",
+        "A interconexão de etapas produtivas e a utilização de dados para eficiência.",
+        "A substituição total de funcionários humanos por robôs autônomos.",
         "O uso exclusivo de combustíveis fósseis para acelerar a produção"
       ],
       correctIndex: 1,
@@ -36,22 +36,22 @@ export const quizQuestionsByTheme = {
       question:
         "Em sistemas de controle, qual a principal diferença entre uma malha aberta e uma malha fechada?",
       options: [
-        "A malha fechada utiliza a informação da saída para ajustar a entrada, enquanto a aberta não",
-        "Sistemas de malha aberta são exclusivos do mundo físico",
-        "A malha aberta é mais precisa pois não sofre interferência de sensores",
-        "Apenas a malha fechada possui uma planta definida"
+        "A malha fechada utiliza a informação da saída para ajustar a entrada, enquanto a aberta não.",
+        "Sistemas de malha aberta são exclusivos do mundo físico, como motores.",
+        "A malha aberta é mais precisa pois não sofre interferência de sensores.",
+        "Apenas a malha fechada possui uma planta ou processo definido."
       ],
       correctIndex: 0,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "CB-04",
-      question: "Como é definido o conceito de Variável Manipulada (VM) em um processo industrial?",
+      question: "Como é definido o conceito de 'Variável Manipulada' (VM) em um processo industrial?",
       options: [
-        "Valor de referência definido pelo operador",
-        "Variável sobre a qual o controlador atua",
-        "Condição externa imprevisível",
-        "Sinal enviado pelo sensor"
+        "É o valor de referência que o operador define no painel de controle.",
+        "É a variável sobre a qual o controlador atua para manter a variável controlada no valor desejado.",
+        "É a condição externa imprevisível que afeta negativamente o desempenho do processo.",
+        "É o sinal que o sensor envia para indicar o estado atual do sistema."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -61,10 +61,10 @@ export const quizQuestionsByTheme = {
       question:
         "No exemplo do sistema de aquecimento de água, qual alternativa identifica corretamente as variáveis?",
       options: [
-        "O vapor é o Set Point",
-        "A temperatura da água é a Variável de Processo e a vazão de vapor é a Variável Manipulada",
-        "A entrada de água fria é a Variável Manipulada",
-        "A válvula manual é o sensor"
+        "O vapor é o Set Point e a água aquecida é o Distúrbio.",
+        "A temperatura da água é a Variável de Processo e a vazão de vapor é a Variável Manipulada.",
+        "A entrada de água fria é a Variável Manipulada.",
+        "A válvula manual é o sensor e o termômetro é o atuador."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS,
@@ -76,56 +76,58 @@ export const quizQuestionsByTheme = {
     },
     {
       id: "CB-06",
-      question: "Qual é a função de um instrumento classificado como \"Cego\"?",
+      question: "Qual é a função de um instrumento classificado como 'Cego'?",
       options: [
-        "Não possui indicação local visível",
-        "Converte sinais mecânicos em pneumáticos",
-        "Instrumento quebrado",
-        "Serve apenas para registrar dados"
+        "Ele não possui uma indicação local visível da variável que está medindo.",
+        "Ele converte sinais mecânicos em sinais pneumáticos exclusivamente.",
+        "Ele é um instrumento quebrado que não consegue detectar sinais.",
+        "Ele serve apenas para registrar dados em papel para análise posterior."
       ],
       correctIndex: 0,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "CB-07",
-      question: "Qual foi a contribuição de Denis Papin em 1681?",
+      question:
+        "Historicamente, qual foi a contribuição de Denis Papin para a engenharia de controle em 1681?",
       options: [
-        "Controle de nível por boia",
-        "Válvula de segurança para vapor",
-        "Realimentação negativa em circuitos",
-        "Toyotismo"
+        "O desenvolvimento do primeiro sistema de controle de nível por boia.",
+        "A invenção da válvula de segurança para regulação da pressão de vapor.",
+        "A descoberta da realimentação negativa em circuitos eletrônicos.",
+        "A criação do modelo de produção flexível conhecido como Toyotismo."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "CB-08",
-      question: "O que define um instrumento transdutor?",
+      question: "O que define um instrumento 'Transdutor' na instrumentação industrial?",
       options: [
-        "Apenas mostra valor",
-        "Converte uma forma de energia em outra",
-        "Atua diretamente na válvula",
-        "Sensor sem energia externa"
+        "Um dispositivo que apenas mostra o valor da variável de forma analógica.",
+        "Um instrumento que recebe informações em uma forma física e as converte em um sinal de saída resultante.",
+        "Um elemento que atua diretamente no processo para fechar uma válvula.",
+        "Um sensor que não precisa de energia externa para funcionar."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "CB-09",
-      question: "Qual componente compara a variável de processo com o Set Point?",
-      options: ["Controlador", "Transmissor", "Atuador", "Sensor"],
+      question:
+        "Qual destes componentes é responsável por comparar a variável de processo com o Set Point e decidir a ação a ser tomada?",
+      options: ["Controlador.", "Transmissor.", "Atuador.", "Sensor."],
       correctIndex: 0,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "CB-10",
       question:
-        "Se um elevador para exatamente no 4º andar após um tempo, como chamamos esse estado?",
+        "Considere um elevador que deve parar no 4º andar. Se ele para exatamente no 4º andar após um tempo, como chamamos o estado final da sua resposta?",
       options: [
-        "Resposta transitória",
-        "Comando de entrada",
-        "Resposta em regime permanente",
-        "Erro de regime permanente"
+        "Resposta transitória.",
+        "Comando de entrada.",
+        "Resposta em regime permanente.",
+        "Erro de regime permanente."
       ],
       correctIndex: 2,
       durationMs: DEFAULT_DURATION_MS
@@ -135,7 +137,7 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-01",
       question:
-        "Um sensor de temperatura possui uma faixa nominal (range) de a . Qual é o alcance (span) desse instrumento?",
+        "Um sensor de temperatura possui uma faixa nominal (range) de -100 ºC a 500 ºC. Qual é o alcance (span) desse instrumento?",
       options: ["500 ºC", "-600ºC", "400 ºC", "600º C"],
       correctIndex: 3,
       durationMs: DEFAULT_DURATION_MS
@@ -156,7 +158,7 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-03",
       question:
-        "Um voltímetro digital possui um display que exibe duas casas decimais (ex: ). Qual é a resolução deste instrumento?",
+        "Um voltímetro digital possui um display que exibe duas casas decimais (ex: 0,00V). Qual é a resolução deste instrumento?",
       options: ["0,1V", "0,01 V", "1V", "0,001"],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -174,10 +176,10 @@ export const quizQuestionsByTheme = {
       question:
         "Um instrumento com range de 50 ºC a 150 ºC possui uma exatidão de ±0,5 % do span. Se ele indica 80 ºC, em qual intervalo a temperatura real se encontra?",
       options: [
-        "Entre 79,6 ºC e 80,4 ºC",
-        "Entre 79,25 ºC e 80,75 ºC",
-        "Entre 79,5 ºC e 80,5 ºC",
-        "Entre 79,5 ºC e 80,25 ºC"
+        "Entre 79,6 ºC e 80,4 ºC.",
+        "Entre 79,25 ºC e 80,75 ºC.",
+        "Entre 79,5 ºC e 80,5 ºC.",
+        "Entre 79,5 ºC e 80,25 ºC."
       ],
       correctIndex: 2,
       durationMs: DEFAULT_DURATION_MS

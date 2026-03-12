@@ -171,9 +171,6 @@ export default function TeacherPage() {
               totalPlayers={teacherState.totalConnectedPlayers}
               selectedTheme={teacherState.selectedTheme}
               showCorrectAnswer={teacherState.phase === "answer_reveal"}
-              revealEndsAt={
-                teacherState.phase === "answer_reveal" ? teacherState.transitionEndsAt : null
-              }
               onForceContinue={handleContinue}
             />
           ) : null}

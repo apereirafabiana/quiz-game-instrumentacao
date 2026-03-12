@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
+import AvatarPicker from "../components/AvatarPicker";
 import useSocket from "../hooks/useSocket";
 import { getPlayerSession, savePlayerSession } from "../lib/sessionStorage";
 
@@ -15,6 +17,7 @@ export default function PlayerJoinPage() {
     savedSession?.roomCode === initialRoomCode ? savedSession.roomCode : initialRoomCode
   );
   const [name, setName] = useState(savedSession?.name ?? "");
+  const [avatar, setAvatar] = useState(savedSession?.avatar ?? DEFAULT_AVATAR);
   const [joining, setJoining] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -23,7 +26,8 @@ export default function PlayerJoinPage() {
       savePlayerSession({
         roomCode: payload.roomCode,
         playerId: payload.playerId,
-        name: payload.playerName
+        name: payload.playerName,
+        avatar: payload.playerAvatar
       });
       setJoining(false);
       navigate(`/play/${payload.roomCode}`, { replace: true });
@@ -50,7 +54,7 @@ export default function PlayerJoinPage() {
     const normalizedName = name.trim();
 
     if (!normalizedRoomCode) {
-      setErrorMessage("Informe o codigo da sala.");
+      setErrorMessage("Informe o código da sala.");
       return;
     }
 
@@ -65,6 +69,7 @@ export default function PlayerJoinPage() {
     socket.emit("join_room", {
       roomCode: normalizedRoomCode,
       name: normalizedName,
+      avatar,
       playerId:
         savedSession?.roomCode === normalizedRoomCode ? savedSession.playerId : null
     });
@@ -84,14 +89,14 @@ export default function PlayerJoinPage() {
               Entre na sala
             </h1>
             <p className="mt-4 text-base text-slate-300">
-              Digite o codigo exibido no telao e escolha um nome rapido para participar. Emojis tambem sao aceitos.
+              Digite o código exibido no telão, escolha seu avatar e use o nome que vai aparecer para a turma.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>
               <label htmlFor="roomCode" className="muted-label">
-                Codigo da sala
+                Código da sala
               </label>
               <input
                 id="roomCode"
@@ -104,6 +109,8 @@ export default function PlayerJoinPage() {
               />
             </div>
 
+            <AvatarPicker value={avatar} onChange={setAvatar} />
+
             <div>
               <label htmlFor="name" className="muted-label">
                 Nome ou apelido
@@ -114,7 +121,7 @@ export default function PlayerJoinPage() {
                 onChange={(event) => setName(event.target.value)}
                 className="input-field mt-2"
                 maxLength={24}
-                placeholder="Ex.: Joao 🔧, Maria ⚙️"
+                placeholder="Ex.: João 🔧, Maria ⚙️"
                 autoComplete="nickname"
               />
             </div>

@@ -1,19 +1,33 @@
 import { motion } from "framer-motion";
 import { getOptionStyle } from "../lib/questionUi";
-import TimerBar from "./TimerBar";
 
 export default function PlayerAnswerPanel({
   question,
   hasAnswered,
   selectedAnswer,
   showCorrectAnswer = false,
-  revealEndsAt = null,
   onSubmit
 }) {
+  const correctIndex = question.correctIndex;
   const correctLetter =
-    typeof question.correctIndex === "number"
-      ? String.fromCharCode(65 + question.correctIndex)
-      : null;
+    typeof correctIndex === "number" ? String.fromCharCode(65 + correctIndex) : null;
+  const selectedLetter =
+    typeof selectedAnswer === "number" ? String.fromCharCode(65 + selectedAnswer) : null;
+  const selectedWasCorrect = typeof selectedAnswer === "number" && selectedAnswer === correctIndex;
+
+  let feedbackMessage = "Toque em uma alternativa para enviar sua resposta.";
+
+  if (showCorrectAnswer) {
+    if (hasAnswered && selectedWasCorrect) {
+      feedbackMessage = `Parabéns! Você acertou a alternativa ${correctLetter}.`;
+    } else if (hasAnswered && selectedLetter) {
+      feedbackMessage = `Quase! Você marcou ${selectedLetter}, mas a correta era ${correctLetter}.`;
+    } else {
+      feedbackMessage = `Tempo encerrado. A correta era a alternativa ${correctLetter}.`;
+    }
+  } else if (hasAnswered) {
+    feedbackMessage = "Resposta enviada. Agora é só aguardar a correção e o ranking.";
+  }
 
   return (
     <div className="space-y-4">
@@ -42,9 +56,9 @@ export default function PlayerAnswerPanel({
           <p className="headline-font mt-2 text-2xl font-black text-white">
             Alternativa {correctLetter}
           </p>
-          <div className="mt-4">
-            <TimerBar deadlineAt={revealEndsAt} durationMs={4000} />
-          </div>
+          <p className="mt-3 text-sm text-slate-200">
+            {question.options[correctIndex]}
+          </p>
         </div>
       ) : null}
 
@@ -52,7 +66,7 @@ export default function PlayerAnswerPanel({
         {question.options.map((option, index) => {
           const optionStyle = getOptionStyle(index);
           const isSelected = selectedAnswer === index;
-          const isCorrect = question.correctIndex === index;
+          const isCorrect = correctIndex === index;
 
           return (
             <motion.button
@@ -65,7 +79,9 @@ export default function PlayerAnswerPanel({
                 showCorrectAnswer
                   ? isCorrect
                     ? "border-emerald-200/80 ring-2 ring-emerald-300/80 shadow-[0_0_0_1px_rgba(167,243,208,0.25),0_18px_38px_rgba(16,185,129,0.24)]"
-                    : "border-white/10 opacity-40"
+                    : isSelected
+                      ? "border-white/30 ring-1 ring-white/30 opacity-55"
+                      : "border-white/10 opacity-40"
                   : isSelected
                     ? "border-white/80 shadow-neon"
                     : "border-white/10 hover:border-white/25"
@@ -89,15 +105,15 @@ export default function PlayerAnswerPanel({
       <motion.div
         initial={false}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-[1.7rem] border border-white/10 bg-white/10 px-4 py-4 text-center text-sm text-slate-100"
+        className={`rounded-[1.7rem] border px-4 py-4 text-center text-sm ${
+          showCorrectAnswer && selectedWasCorrect
+            ? "border-emerald-300/30 bg-emerald-500/12 text-emerald-50"
+            : showCorrectAnswer
+              ? "border-amber-300/25 bg-amber-500/10 text-amber-50"
+              : "border-white/10 bg-white/10 text-slate-100"
+        }`}
       >
-        {showCorrectAnswer
-          ? hasAnswered
-            ? `Resposta encerrada. A correta era a alternativa ${correctLetter}.`
-            : `Tempo encerrado. A correta era a alternativa ${correctLetter}.`
-          : hasAnswered
-            ? "Resposta enviada. Agora e so aguardar a revelacao e o ranking."
-            : "Toque em uma alternativa para enviar sua resposta."}
+        {feedbackMessage}
       </motion.div>
     </div>
   );

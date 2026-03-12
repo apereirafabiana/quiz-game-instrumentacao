@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
 import FinalPodium from "../components/FinalPodium";
 import PlayerAnswerPanel from "../components/PlayerAnswerPanel";
 import RankingTransition from "../components/RankingTransition";
@@ -52,6 +53,7 @@ export default function PlayerGamePage() {
       socket.emit("join_room", {
         roomCode,
         name: playerSession.name,
+        avatar: playerSession.avatar,
         playerId: playerSession.playerId
       });
     }
@@ -60,7 +62,8 @@ export default function PlayerGamePage() {
       const nextSession = {
         roomCode: payload.roomCode,
         playerId: payload.playerId,
-        name: payload.playerName
+        name: payload.playerName,
+        avatar: payload.playerAvatar
       };
       setPlayerSession(nextSession);
       savePlayerSession(nextSession);
@@ -79,7 +82,8 @@ export default function PlayerGamePage() {
       savePlayerSession({
         roomCode: nextState.roomCode,
         playerId: nextState.player.id,
-        name: nextState.player.name
+        name: nextState.player.name,
+        avatar: nextState.player.avatar
       });
     }
 
@@ -137,7 +141,7 @@ export default function PlayerGamePage() {
   if (!playerState) {
     return (
       <main className="page-shell">
-        <MobileLoading message="Conectando voce ao quiz..." />
+        <MobileLoading message="Conectando você ao quiz..." />
       </main>
     );
   }
@@ -145,6 +149,7 @@ export default function PlayerGamePage() {
   const isLastQuestion =
     playerState.question &&
     playerState.question.number === playerState.question.totalQuestions;
+  const playerAvatar = playerState.player.avatar ?? DEFAULT_AVATAR;
 
   return (
     <main className="page-shell">
@@ -156,18 +161,21 @@ export default function PlayerGamePage() {
             className="glass-panel mx-auto w-full max-w-lg p-6 sm:p-8"
           >
             <div className="text-center">
-              <p className="muted-label">Aguardando inicio</p>
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] border border-white/10 bg-white/10 text-5xl shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
+                {playerAvatar}
+              </div>
+              <p className="muted-label mt-5">Aguardando início</p>
               <h1 className="headline-font mt-4 text-4xl font-black text-white">
-                Ola, {playerState.player.name}
+                Olá, {playerState.player.name}
               </h1>
               <p className="mt-4 text-base text-slate-300">
-                Voce entrou na sala {playerState.roomCode}. Assim que o professor iniciar, a pergunta aparece aqui.
+                Você entrou na sala {playerState.roomCode}. Assim que o professor iniciar, a pergunta aparece aqui.
               </p>
             </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
-                <p className="muted-label">Pontuacao</p>
+                <p className="muted-label">Pontuação</p>
                 <p className="mt-3 text-4xl font-black text-white">{playerState.player.score}</p>
               </div>
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
@@ -196,10 +204,16 @@ export default function PlayerGamePage() {
               </div>
               <div className="mt-4 space-y-4">
                 <div className="flex items-center justify-between gap-4 text-sm text-slate-300">
-                  <span>Tema: {playerState.selectedTheme}</span>
+                  <span>
+                    {playerAvatar} {playerState.player.name}
+                  </span>
                   <span>
                     {playerState.answeredCount}/{playerState.totalConnectedPlayers} responderam
                   </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-sm text-slate-300">
+                  <span>Tema: {playerState.selectedTheme}</span>
+                  <span>{playerState.player.position}º lugar</span>
                 </div>
                 {playerState.phase === "question" ? (
                   <TimerBar
@@ -215,9 +229,6 @@ export default function PlayerGamePage() {
               hasAnswered={playerState.player.hasAnsweredCurrentQuestion}
               selectedAnswer={playerState.answer?.answerIndex ?? selectedAnswer}
               showCorrectAnswer={playerState.phase === "answer_reveal"}
-              revealEndsAt={
-                playerState.phase === "answer_reveal" ? playerState.transitionEndsAt : null
-              }
               onSubmit={handleSubmitAnswer}
             />
           </div>
@@ -232,8 +243,8 @@ export default function PlayerGamePage() {
           title={isLastQuestion ? "Ranking final da partida" : "Ranking parcial"}
           subtitle={
             isLastQuestion
-              ? `Voce terminou em ${playerState.player.position} lugar com ${playerState.player.score} pontos.`
-              : `Voce esta em ${playerState.player.position} lugar com ${playerState.player.score} pontos.`
+              ? `Você terminou em ${playerState.player.position}º lugar com ${playerState.player.score} pontos.`
+              : `Você está em ${playerState.player.position}º lugar com ${playerState.player.score} pontos.`
           }
         />
       ) : null}

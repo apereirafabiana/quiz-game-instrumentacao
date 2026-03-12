@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
 
 export default function ConnectedPlayersList({ players }) {
   return (
@@ -26,8 +27,8 @@ export default function ConnectedPlayersList({ players }) {
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-cyan/40 to-brand-rose/40 text-base font-black text-white">
-                    {player.name.slice(0, 1).toUpperCase()}
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-cyan/30 via-white/10 to-brand-rose/30 text-2xl shadow-[0_12px_24px_rgba(15,23,42,0.16)]">
+                    {player.avatar ?? DEFAULT_AVATAR}
                   </div>
                   <div>
                     <p className="text-base font-bold text-white">{player.name}</p>
@@ -36,9 +37,7 @@ export default function ConnectedPlayersList({ players }) {
                     </p>
                   </div>
                 </div>
-                <span className="text-sm font-semibold text-slate-200">
-                  #{player.position}
-                </span>
+                <span className="text-sm font-semibold text-slate-200">#{player.position}</span>
               </div>
             </motion.div>
           ))}
@@ -47,7 +46,7 @@ export default function ConnectedPlayersList({ players }) {
 
       {players.length === 0 ? (
         <div className="mt-5 rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-8 text-center text-slate-300">
-          O lobby esta esperando os primeiros alunos entrarem.
+          O lobby está esperando os primeiros alunos entrarem.
         </div>
       ) : null}
     </div>

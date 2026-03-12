@@ -1,24 +1,28 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
 
 const MEDALS = {
   1: {
     label: "Ouro",
-    badge: "1",
-    cardClass: "from-amber-300/35 to-yellow-500/15 border-amber-200/40",
-    glowClass: "shadow-[0_18px_40px_rgba(245,158,11,0.2)]"
+    badge: "🏆",
+    cardClass: "from-amber-300/35 via-yellow-400/20 to-amber-600/10 border-amber-200/40",
+    glowClass: "shadow-[0_22px_46px_rgba(245,158,11,0.24)]",
+    textClass: "text-amber-100"
   },
   2: {
     label: "Prata",
-    badge: "2",
-    cardClass: "from-slate-200/20 to-slate-400/10 border-slate-200/25",
-    glowClass: "shadow-[0_18px_40px_rgba(203,213,225,0.14)]"
+    badge: "🏆",
+    cardClass: "from-slate-200/22 via-slate-300/12 to-slate-500/10 border-slate-200/25",
+    glowClass: "shadow-[0_18px_40px_rgba(203,213,225,0.14)]",
+    textClass: "text-slate-100"
   },
   3: {
     label: "Bronze",
-    badge: "3",
-    cardClass: "from-orange-400/25 to-amber-600/10 border-orange-300/25",
-    glowClass: "shadow-[0_18px_40px_rgba(249,115,22,0.14)]"
+    badge: "🏆",
+    cardClass: "from-orange-400/25 via-amber-600/12 to-orange-900/10 border-orange-300/25",
+    glowClass: "shadow-[0_18px_40px_rgba(249,115,22,0.16)]",
+    textClass: "text-orange-100"
   }
 };
 
@@ -43,18 +47,25 @@ function TopCard({ entry, playerId }) {
       }`}
     >
       <div className="flex items-center justify-between gap-3">
-        <span className="text-xs font-bold uppercase tracking-[0.3em] text-slate-100/80">
+        <span className={`text-xs font-bold uppercase tracking-[0.3em] ${medal.textClass}`}>
           {medal.label}
         </span>
-        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xl font-black text-white">
+        <span className={`text-3xl drop-shadow-[0_8px_18px_rgba(15,23,42,0.22)] ${medal.textClass}`}>
           {medal.badge}
         </span>
       </div>
-      <p className="headline-font mt-8 text-2xl font-black text-white sm:text-3xl">
-        {entry.name}
-      </p>
-      <p className="mt-3 text-lg font-bold text-slate-100">{entry.score} pts</p>
-      <p className="mt-2 text-sm text-slate-200/80">{entry.correctAnswers} acertos</p>
+
+      <div className="mt-6 flex items-center gap-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-[1.7rem] bg-white/12 text-4xl shadow-[0_12px_24px_rgba(15,23,42,0.14)]">
+          {entry.avatar ?? DEFAULT_AVATAR}
+        </div>
+        <div>
+          <p className="headline-font text-2xl font-black text-white sm:text-3xl">{entry.name}</p>
+          <p className="mt-1 text-sm text-slate-100/85">{entry.correctAnswers} acertos</p>
+        </div>
+      </div>
+
+      <p className="mt-5 text-lg font-black text-white">{entry.score} pts</p>
     </motion.div>
   );
 }
@@ -65,7 +76,7 @@ export default function RankingTransition({
   autoAdvanceAt,
   onContinue,
   title = "Ranking parcial",
-  subtitle = "A disputa esta esquentando.",
+  subtitle = "A disputa está esquentando.",
   showContinueButton = false
 }) {
   const [countdown, setCountdown] = useState(getCountdown(autoAdvanceAt));
@@ -100,12 +111,12 @@ export default function RankingTransition({
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <div className="text-center">
-          <p className="muted-label">Etapa concluida</p>
+          <p className="muted-label">Etapa concluída</p>
           <h1 className="projection-title mt-4">{title}</h1>
           <p className="mt-4 text-lg text-slate-200">{subtitle}</p>
           {autoAdvanceAt ? (
             <p className="mt-3 text-sm uppercase tracking-[0.3em] text-slate-400">
-              Proxima etapa em {countdown}s
+              Próxima etapa em {countdown}s
             </p>
           ) : null}
         </div>
@@ -119,7 +130,7 @@ export default function RankingTransition({
         <div className="glass-panel p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="muted-label">Classificacao</p>
+              <p className="muted-label">Classificação</p>
               <h3 className="headline-font mt-2 text-2xl font-black text-white">
                 Placar atualizado
               </h3>
@@ -144,9 +155,14 @@ export default function RankingTransition({
                     <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sm font-black text-white">
                       {entry.position}
                     </span>
-                    <div>
-                      <p className="text-base font-bold text-white">{entry.name}</p>
-                      <p className="text-sm text-slate-300">{entry.correctAnswers} acertos</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-2xl">
+                        {entry.avatar ?? DEFAULT_AVATAR}
+                      </div>
+                      <div>
+                        <p className="text-base font-bold text-white">{entry.name}</p>
+                        <p className="text-sm text-slate-300">{entry.correctAnswers} acertos</p>
+                      </div>
                     </div>
                   </div>
                   <p className="text-lg font-black text-white">{entry.score} pts</p>
@@ -154,7 +170,7 @@ export default function RankingTransition({
               ))
             ) : (
               <div className="rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center text-slate-300">
-                O podio ja esta completo acima.
+                O pódio já está completo acima.
               </div>
             )}
           </div>

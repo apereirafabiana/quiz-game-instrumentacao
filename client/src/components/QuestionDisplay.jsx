@@ -40,7 +40,6 @@ export default function QuestionDisplay({
   totalPlayers,
   selectedTheme,
   showCorrectAnswer = false,
-  revealEndsAt = null,
   onForceContinue
 }) {
   const correctLetter =
@@ -89,11 +88,8 @@ export default function QuestionDisplay({
                   Alternativa {correctLetter}
                 </p>
                 <p className="mt-3 text-sm text-emerald-50/85 sm:text-base">
-                  A alternativa correta fica em destaque por alguns segundos antes do ranking.
+                  A resposta correta fica em destaque. Comente com a turma e avance quando quiser.
                 </p>
-                <div className="mt-5">
-                  <TimerBar deadlineAt={revealEndsAt} durationMs={4000} />
-                </div>
               </div>
             ) : (
               <TimerBar deadlineAt={question.deadlineAt} durationMs={question.durationMs} />
@@ -116,11 +112,11 @@ export default function QuestionDisplay({
         <div className="flex flex-col items-center gap-4">
           <div className="rounded-full border border-white/10 bg-white/10 px-5 py-3 text-base font-semibold text-slate-100">
             {showCorrectAnswer
-              ? "Resposta revelada para a turma."
+              ? "Professor no controle: avance para o ranking quando terminar o comentário."
               : `${answeredCount} de ${totalPlayers} responderam`}
           </div>
           <button type="button" onClick={onForceContinue} className="secondary-button">
-            {showCorrectAnswer ? "Mostrar ranking agora" : "Encerrar pergunta agora"}
+            {showCorrectAnswer ? "Mostrar ranking" : "Encerrar pergunta agora"}
           </button>
         </div>
       </div>
