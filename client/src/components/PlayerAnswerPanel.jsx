@@ -1,18 +1,20 @@
 import { motion } from "framer-motion";
-
-const OPTION_THEMES = [
-  "from-rose-500 to-orange-400",
-  "from-cyan-500 to-blue-500",
-  "from-lime-400 to-emerald-500",
-  "from-fuchsia-500 to-violet-500"
-];
+import { getOptionStyle } from "../lib/questionUi";
+import TimerBar from "./TimerBar";
 
 export default function PlayerAnswerPanel({
   question,
   hasAnswered,
   selectedAnswer,
+  showCorrectAnswer = false,
+  revealEndsAt = null,
   onSubmit
 }) {
+  const correctLetter =
+    typeof question.correctIndex === "number"
+      ? String.fromCharCode(65 + question.correctIndex)
+      : null;
+
   return (
     <div className="space-y-4">
       <div className="glass-panel p-5 sm:p-6">
@@ -22,30 +24,60 @@ export default function PlayerAnswerPanel({
         <h1 className="headline-font mt-3 text-2xl font-black text-white sm:text-3xl">
           {question.question}
         </h1>
+
+        {question.media?.type === "image" ? (
+          <div className="mt-4 overflow-hidden rounded-[1.4rem] border border-white/10 bg-slate-950/40 p-2">
+            <img
+              src={question.media.src}
+              alt={question.media.alt}
+              className="w-full rounded-[1rem] object-contain"
+            />
+          </div>
+        ) : null}
       </div>
+
+      {showCorrectAnswer ? (
+        <div className="glass-panel p-4 sm:p-5">
+          <p className="muted-label text-emerald-100/90">Resposta correta</p>
+          <p className="headline-font mt-2 text-2xl font-black text-white">
+            Alternativa {correctLetter}
+          </p>
+          <div className="mt-4">
+            <TimerBar deadlineAt={revealEndsAt} durationMs={4000} />
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid gap-3">
         {question.options.map((option, index) => {
+          const optionStyle = getOptionStyle(index);
           const isSelected = selectedAnswer === index;
+          const isCorrect = question.correctIndex === index;
 
           return (
             <motion.button
-              key={option}
+              key={`${question.id}-${optionStyle.letter}`}
               type="button"
-              whileTap={{ scale: 0.98 }}
+              whileTap={showCorrectAnswer ? undefined : { scale: 0.98 }}
               onClick={() => onSubmit(index)}
-              disabled={hasAnswered}
-              className={`rounded-[1.7rem] border px-4 py-5 text-left text-base font-bold text-white transition sm:px-5 sm:py-6 sm:text-lg ${
-                isSelected
-                  ? "border-white/80 shadow-neon"
-                  : "border-white/10 hover:border-white/25"
+              disabled={hasAnswered || showCorrectAnswer}
+              className={`rounded-[1.7rem] border bg-gradient-to-r px-4 py-5 text-left text-base font-bold text-white transition sm:px-5 sm:py-6 sm:text-lg ${optionStyle.gradient} ${
+                showCorrectAnswer
+                  ? isCorrect
+                    ? "border-emerald-200/80 ring-2 ring-emerald-300/80 shadow-[0_0_0_1px_rgba(167,243,208,0.25),0_18px_38px_rgba(16,185,129,0.24)]"
+                    : "border-white/10 opacity-40"
+                  : isSelected
+                    ? "border-white/80 shadow-neon"
+                    : "border-white/10 hover:border-white/25"
               } ${
-                hasAnswered && !isSelected ? "opacity-60" : "opacity-100"
-              } bg-gradient-to-r ${OPTION_THEMES[index % OPTION_THEMES.length]}`}
+                !showCorrectAnswer && hasAnswered && !isSelected ? "opacity-60" : "opacity-100"
+              }`}
             >
               <div className="flex items-center gap-4">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950/30 text-sm font-black">
-                  {String.fromCharCode(65 + index)}
+                <span
+                  className={`flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-black text-white ${optionStyle.badgeClass}`}
+                >
+                  {optionStyle.letter}
                 </span>
                 <span>{option}</span>
               </div>
@@ -56,12 +88,16 @@ export default function PlayerAnswerPanel({
 
       <motion.div
         initial={false}
-        animate={{ opacity: hasAnswered ? 1 : 0.8, scale: hasAnswered ? 1 : 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="rounded-[1.7rem] border border-white/10 bg-white/10 px-4 py-4 text-center text-sm text-slate-100"
       >
-        {hasAnswered
-          ? "Resposta enviada. Agora e so aguardar o ranking."
-          : "Toque em uma alternativa para enviar sua resposta."}
+        {showCorrectAnswer
+          ? hasAnswered
+            ? `Resposta encerrada. A correta era a alternativa ${correctLetter}.`
+            : `Tempo encerrado. A correta era a alternativa ${correctLetter}.`
+          : hasAnswered
+            ? "Resposta enviada. Agora e so aguardar a revelacao e o ranking."
+            : "Toque em uma alternativa para enviar sua resposta."}
       </motion.div>
     </div>
   );

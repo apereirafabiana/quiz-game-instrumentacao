@@ -1,4 +1,8 @@
-import { sampleQuestions } from "../../../shared/sampleQuestions.js";
+import {
+  DEFAULT_THEME,
+  QUESTION_THEMES,
+  getQuestionsForTheme
+} from "../../../shared/sampleQuestions.js";
 import {
   buildQuestionPayload,
   getCurrentQuestion,
@@ -8,6 +12,7 @@ import {
 import { buildRanking, calculateAnswerScore } from "./scoring.js";
 import { generateRoomCode } from "../utils/generateRoomCode.js";
 
+const ANSWER_REVEAL_MS = 4000;
 const RANKING_DISPLAY_MS = 6500;
 
 function createPlayer({ id, name, socketId }) {
@@ -30,8 +35,9 @@ function createRoom({ code, teacherSocketId }) {
     teacherConnected: true,
     createdAt: Date.now(),
     state: "lobby",
+    selectedTheme: DEFAULT_THEME,
     questionIndex: -1,
-    questions: sampleQuestions.map((question) => ({ ...question })),
+    questions: getQuestionsForTheme(DEFAULT_THEME),
     players: new Map(),
     answersByQuestion: {},
     currentQuestionStartedAt: null,
@@ -43,7 +49,9 @@ function createRoom({ code, teacherSocketId }) {
 }
 
 function clampName(name) {
-  return `${name ?? ""}`.trim().slice(0, 24);
+  return Array.from(`${name ?? ""}`.trim())
+    .slice(0, 24)
+    .join("");
 }
 
 function generatePlayerId() {
@@ -59,17 +67,17 @@ function ensureUniquePlayerName(room, desiredName, currentPlayerId = null) {
   const existingNames = new Set(
     [...room.players.values()]
       .filter((player) => player.id !== currentPlayerId)
-      .map((player) => player.name.toLowerCase())
+      .map((player) => player.name.toLocaleLowerCase())
   );
 
-  if (!existingNames.has(baseName.toLowerCase())) {
+  if (!existingNames.has(baseName.toLocaleLowerCase())) {
     return baseName;
   }
 
   let suffix = 2;
   let candidate = `${baseName} ${suffix}`;
 
-  while (existingNames.has(candidate.toLowerCase())) {
+  while (existingNames.has(candidate.toLocaleLowerCase())) {
     suffix += 1;
     candidate = `${baseName} ${suffix}`;
   }
@@ -89,6 +97,10 @@ function clearRoomTimers(room) {
   }
 }
 
+function hasMoreQuestions(room) {
+  return room.questionIndex < room.questions.length - 1;
+}
+
 export function createGameManager({ io, roomStore }) {
   function emitRoomEvent(roomCode, eventName, payload) {
     io.to(roomCode).emit(eventName, payload);
@@ -96,7 +108,9 @@ export function createGameManager({ io, roomStore }) {
 
   function buildTeacherState(room) {
     const ranking = buildRanking(room.players.values());
-    const question = buildQuestionPayload(room);
+    const question = buildQuestionPayload(room, {
+      revealCorrectAnswer: room.state === "answer_reveal"
+    });
     const progress = getQuestionProgress(room);
     const connectedPlayersCount = getConnectedPlayerCount(room);
 
@@ -104,9 +118,12 @@ export function createGameManager({ io, roomStore }) {
       roomCode: room.code,
       phase: room.state,
       createdAt: room.createdAt,
+      selectedTheme: room.selectedTheme,
+      availableThemes: QUESTION_THEMES,
       players: ranking,
       connectedPlayersCount,
-      canStartQuiz: room.state === "lobby" && connectedPlayersCount > 0,
+      canStartQuiz:
+        room.state === "lobby" && connectedPlayersCount > 0 && room.questions.length > 0,
       ranking,
       question,
       answeredCount: progress.answeredCount,
@@ -117,7 +134,9 @@ export function createGameManager({ io, roomStore }) {
 
   function buildPlayerState(room, player) {
     const ranking = buildRanking(room.players.values());
-    const question = buildQuestionPayload(room);
+    const question = buildQuestionPayload(room, {
+      revealCorrectAnswer: room.state === "answer_reveal"
+    });
     const currentQuestion = getCurrentQuestion(room);
     const answerForCurrentQuestion =
       currentQuestion && room.answersByQuestion[currentQuestion.id]
@@ -130,6 +149,7 @@ export function createGameManager({ io, roomStore }) {
     return {
       roomCode: room.code,
       phase: room.state,
+      selectedTheme: room.selectedTheme,
       player: {
         id: player.id,
         name: player.name,
@@ -144,6 +164,7 @@ export function createGameManager({ io, roomStore }) {
       answer: answerForCurrentQuestion
         ? {
             answerIndex: answerForCurrentQuestion.answerIndex,
+            isCorrect: answerForCurrentQuestion.isCorrect,
             pointsAwarded: answerForCurrentQuestion.pointsAwarded
           }
         : null,
@@ -174,7 +195,7 @@ export function createGameManager({ io, roomStore }) {
     const room = roomStore.getRoom(normalizedCode);
 
     if (!room) {
-      const error = new Error("Sala nao encontrada.");
+      const error = new Error("Sala não encontrada.");
       error.code = "ROOM_NOT_FOUND";
       throw error;
     }
@@ -194,6 +215,11 @@ export function createGameManager({ io, roomStore }) {
     return roomCode;
   }
 
+  function scheduleTransition(room, delayMs, callback) {
+    room.transitionEndsAt = Date.now() + delayMs;
+    room.transitionTimeoutId = setTimeout(callback, delayMs);
+  }
+
   function startQuestion(roomCode, questionIndex) {
     const room = getRoomOrThrow(roomCode);
     const nextQuestion = room.questions[questionIndex];
@@ -209,7 +235,7 @@ export function createGameManager({ io, roomStore }) {
     room.currentQuestionStartedAt = Date.now();
     room.currentQuestionEndsAt =
       room.currentQuestionStartedAt + (nextQuestion.durationMs ?? 30000);
-    room.transitionEndsAt = room.currentQuestionEndsAt;
+    room.transitionEndsAt = null;
 
     emitRoomEvent(room.code, "question_started", {
       roomCode: room.code,
@@ -228,6 +254,7 @@ export function createGameManager({ io, roomStore }) {
     clearRoomTimers(room);
     room.state = "final";
     room.transitionEndsAt = null;
+    room.currentQuestionEndsAt = null;
 
     const ranking = buildRanking(room.players.values());
     emitRoomEvent(room.code, "quiz_finished", {
@@ -245,9 +272,52 @@ export function createGameManager({ io, roomStore }) {
       return;
     }
 
-    if (room.state === "ranking") {
-      startQuestion(roomCode, room.questionIndex + 1);
+    if (room.state === "answer_reveal") {
+      showRanking(roomCode);
+      return;
     }
+
+    if (room.state === "ranking") {
+      if (hasMoreQuestions(room)) {
+        startQuestion(roomCode, room.questionIndex + 1);
+      } else {
+        finishQuiz(roomCode);
+      }
+    }
+  }
+
+  function showRanking(roomCode) {
+    const room = getRoomOrThrow(roomCode);
+
+    if (room.state !== "answer_reveal") {
+      return;
+    }
+
+    clearRoomTimers(room);
+
+    const ranking = buildRanking(room.players.values());
+    const isLastQuestion = !hasMoreQuestions(room);
+
+    room.state = "ranking";
+    room.currentQuestionEndsAt = null;
+    scheduleTransition(room, RANKING_DISPLAY_MS, () => {
+      if (hasMoreQuestions(room)) {
+        startQuestion(room.code, room.questionIndex + 1);
+      } else {
+        finishQuiz(room.code);
+      }
+    });
+
+    emitRoomEvent(room.code, "ranking_update", {
+      roomCode: room.code,
+      ranking,
+      questionNumber: room.questionIndex + 1,
+      totalQuestions: room.questions.length,
+      autoAdvanceAt: room.transitionEndsAt,
+      isLastQuestion
+    });
+
+    syncRoomState(room.code);
   }
 
   function endCurrentQuestion(roomCode, reason = "timer") {
@@ -261,36 +331,30 @@ export function createGameManager({ io, roomStore }) {
 
     const ranking = buildRanking(room.players.values());
     const currentQuestion = getCurrentQuestion(room);
-    const hasMoreQuestions = room.questionIndex < room.questions.length - 1;
+
+    room.state = "answer_reveal";
+    room.currentQuestionEndsAt = null;
+    scheduleTransition(room, ANSWER_REVEAL_MS, () => {
+      showRanking(room.code);
+    });
 
     emitRoomEvent(room.code, "question_ended", {
       roomCode: room.code,
       reason,
       questionId: currentQuestion?.id ?? null,
+      correctIndex: currentQuestion?.correctIndex ?? null,
+      revealEndsAt: room.transitionEndsAt,
       ranking
     });
 
-    if (!hasMoreQuestions) {
-      finishQuiz(room.code);
-      return;
-    }
-
-    room.state = "ranking";
-    room.transitionEndsAt = Date.now() + RANKING_DISPLAY_MS;
-
-    emitRoomEvent(room.code, "ranking_update", {
+    emitRoomEvent(room.code, "answer_revealed", {
       roomCode: room.code,
-      ranking,
-      questionNumber: room.questionIndex + 1,
-      totalQuestions: room.questions.length,
-      autoAdvanceAt: room.transitionEndsAt
+      questionId: currentQuestion?.id ?? null,
+      correctIndex: currentQuestion?.correctIndex ?? null,
+      revealEndsAt: room.transitionEndsAt
     });
 
     syncRoomState(room.code);
-
-    room.transitionTimeoutId = setTimeout(() => {
-      startQuestion(room.code, room.questionIndex + 1);
-    }, RANKING_DISPLAY_MS);
   }
 
   function createTeacherRoom(socket) {
@@ -328,8 +392,8 @@ export function createGameManager({ io, roomStore }) {
     if (room.state !== "lobby" && !existingPlayer) {
       const error = new Error(
         room.state === "final"
-          ? "O quiz ja terminou nesta sala."
-          : "O quiz ja comecou. Entradas novas foram bloqueadas."
+          ? "O quiz já terminou nesta sala."
+          : "O quiz já começou. Entradas novas foram bloqueadas."
       );
       error.code = "ROOM_LOCKED";
       throw error;
@@ -371,11 +435,38 @@ export function createGameManager({ io, roomStore }) {
     return { room, player };
   }
 
+  function setTheme(roomCode, theme) {
+    const room = getRoomOrThrow(roomCode);
+
+    if (room.state !== "lobby") {
+      const error = new Error("O tema só pode ser alterado antes do início do quiz.");
+      error.code = "THEME_LOCKED";
+      throw error;
+    }
+
+    if (!QUESTION_THEMES.includes(theme)) {
+      const error = new Error("Tema de quiz inválido.");
+      error.code = "INVALID_THEME";
+      throw error;
+    }
+
+    room.selectedTheme = theme;
+    room.questions = getQuestionsForTheme(theme);
+    room.questionIndex = -1;
+    room.currentQuestionStartedAt = null;
+    room.currentQuestionEndsAt = null;
+    room.transitionEndsAt = null;
+    room.answersByQuestion = {};
+    clearRoomTimers(room);
+    syncRoomState(room.code);
+    return room;
+  }
+
   function startQuiz(roomCode) {
     const room = getRoomOrThrow(roomCode);
 
     if (room.state !== "lobby") {
-      const error = new Error("O quiz ja foi iniciado.");
+      const error = new Error("O quiz já foi iniciado.");
       error.code = "QUIZ_ALREADY_STARTED";
       throw error;
     }
@@ -386,9 +477,18 @@ export function createGameManager({ io, roomStore }) {
       throw error;
     }
 
+    room.questions = getQuestionsForTheme(room.selectedTheme);
+
+    if (room.questions.length === 0) {
+      const error = new Error("Este tema ainda não possui perguntas disponíveis.");
+      error.code = "EMPTY_THEME";
+      throw error;
+    }
+
     emitRoomEvent(room.code, "quiz_started", {
       roomCode: room.code,
-      totalQuestions: room.questions.length
+      totalQuestions: room.questions.length,
+      theme: room.selectedTheme
     });
 
     startQuestion(room.code, 0);
@@ -399,7 +499,7 @@ export function createGameManager({ io, roomStore }) {
     const room = getRoomOrThrow(roomCode);
 
     if (room.state !== "question") {
-      const error = new Error("Nao ha pergunta ativa neste momento.");
+      const error = new Error("Não há pergunta ativa neste momento.");
       error.code = "NO_ACTIVE_QUESTION";
       throw error;
     }
@@ -407,13 +507,13 @@ export function createGameManager({ io, roomStore }) {
     const player = room.players.get(playerId);
 
     if (!player) {
-      const error = new Error("Jogador nao encontrado nesta sala.");
+      const error = new Error("Jogador não encontrado nesta sala.");
       error.code = "PLAYER_NOT_FOUND";
       throw error;
     }
 
     if (hasPlayerAnsweredCurrentQuestion(room, playerId)) {
-      const error = new Error("Voce ja respondeu esta pergunta.");
+      const error = new Error("Você já respondeu esta pergunta.");
       error.code = "ANSWER_ALREADY_SENT";
       throw error;
     }
@@ -448,7 +548,8 @@ export function createGameManager({ io, roomStore }) {
     if (player.socketId) {
       io.to(player.socketId).emit("answer_received", {
         roomCode: room.code,
-        pointsAwarded
+        pointsAwarded,
+        isCorrect
       });
     }
 
@@ -480,6 +581,7 @@ export function createGameManager({ io, roomStore }) {
     room.currentQuestionStartedAt = null;
     room.currentQuestionEndsAt = null;
     room.transitionEndsAt = null;
+    room.questions = getQuestionsForTheme(room.selectedTheme);
     room.answersByQuestion = {};
 
     room.players.forEach((player) => {
@@ -548,6 +650,8 @@ export function createGameManager({ io, roomStore }) {
     joinPlayer,
     restartQuiz,
     restoreTeacher,
+    setTheme,
+    showRanking,
     startQuiz,
     submitAnswer
   };

@@ -37,6 +37,14 @@ export function registerSocketHandlers(io) {
       }
     });
 
+    socket.on("set_quiz_theme", (payload = {}) => {
+      try {
+        gameManager.setTheme(payload.roomCode, payload.theme);
+      } catch (error) {
+        emitSocketError(socket, error);
+      }
+    });
+
     socket.on("start_quiz", (payload = {}) => {
       try {
         gameManager.startQuiz(payload.roomCode);

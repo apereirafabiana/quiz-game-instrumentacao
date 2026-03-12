@@ -108,12 +108,27 @@ export default function TeacherPage() {
     ? `Se o QR nao abrir, digite ${visibleJoinUrl} no celular. Professor e alunos precisam estar no mesmo Wi-Fi; se ainda falhar, libere a porta 5173 no firewall do Windows.`
     : "Professor e alunos precisam estar no mesmo Wi-Fi para entrar na sala em tempo real.";
 
+  const isLastQuestion =
+    teacherState?.question &&
+    teacherState.question.number === teacherState.question.totalQuestions;
+
   function handleStartQuiz() {
     socket.emit("start_quiz", { roomCode: teacherState.roomCode });
   }
 
   function handleContinue() {
     socket.emit("next_question", { roomCode: teacherState.roomCode });
+  }
+
+  function handleSelectTheme(theme) {
+    if (!teacherState || theme === teacherState.selectedTheme) {
+      return;
+    }
+
+    socket.emit("set_quiz_theme", {
+      roomCode: teacherState.roomCode,
+      theme
+    });
   }
 
   function handleRestart() {
@@ -139,17 +154,26 @@ export default function TeacherPage() {
               connectedPlayersCount={teacherState.connectedPlayersCount}
               joinUrl={joinUrl}
               networkHint={networkHint}
+              selectedTheme={teacherState.selectedTheme}
+              availableThemes={teacherState.availableThemes}
+              onSelectTheme={handleSelectTheme}
               onStartQuiz={handleStartQuiz}
               canStartQuiz={teacherState.canStartQuiz}
             />
           ) : null}
 
-          {teacherState.phase === "question" && teacherState.question ? (
+          {(teacherState.phase === "question" || teacherState.phase === "answer_reveal") &&
+          teacherState.question ? (
             <QuestionDisplay
-              key={`question-${teacherState.question.id}`}
+              key={`question-${teacherState.question.id}-${teacherState.phase}`}
               question={teacherState.question}
               answeredCount={teacherState.answeredCount}
               totalPlayers={teacherState.totalConnectedPlayers}
+              selectedTheme={teacherState.selectedTheme}
+              showCorrectAnswer={teacherState.phase === "answer_reveal"}
+              revealEndsAt={
+                teacherState.phase === "answer_reveal" ? teacherState.transitionEndsAt : null
+              }
               onForceContinue={handleContinue}
             />
           ) : null}
@@ -161,8 +185,12 @@ export default function TeacherPage() {
               autoAdvanceAt={teacherState.transitionEndsAt}
               onContinue={handleContinue}
               showContinueButton
-              title="Ranking da rodada"
-              subtitle="A classificacao parcial aparece antes da proxima pergunta."
+              title={isLastQuestion ? "Ranking final da partida" : "Ranking da rodada"}
+              subtitle={
+                isLastQuestion
+                  ? "A classificacao completa foi atualizada. O podio final aparece a seguir."
+                  : "A classificacao parcial aparece depois da resposta correta e antes da proxima pergunta."
+              }
             />
           ) : null}
 

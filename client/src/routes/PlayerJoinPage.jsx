@@ -11,7 +11,9 @@ export default function PlayerJoinPage() {
   const savedSession = getPlayerSession();
   const initialRoomCode = searchParams.get("room")?.toUpperCase() ?? "";
 
-  const [roomCode, setRoomCode] = useState(savedSession?.roomCode === initialRoomCode ? savedSession.roomCode : initialRoomCode);
+  const [roomCode, setRoomCode] = useState(
+    savedSession?.roomCode === initialRoomCode ? savedSession.roomCode : initialRoomCode
+  );
   const [name, setName] = useState(savedSession?.name ?? "");
   const [joining, setJoining] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -82,7 +84,7 @@ export default function PlayerJoinPage() {
               Entre na sala
             </h1>
             <p className="mt-4 text-base text-slate-300">
-              Digite o codigo exibido no telao e escolha um nome rapido para participar.
+              Digite o codigo exibido no telao e escolha um nome rapido para participar. Emojis tambem sao aceitos.
             </p>
           </div>
 
@@ -112,7 +114,7 @@ export default function PlayerJoinPage() {
                 onChange={(event) => setName(event.target.value)}
                 className="input-field mt-2"
                 maxLength={24}
-                placeholder="Ex.: Ana, Leo, Equipe 1"
+                placeholder="Ex.: Joao 🔧, Maria ⚙️"
                 autoComplete="nickname"
               />
             </div>

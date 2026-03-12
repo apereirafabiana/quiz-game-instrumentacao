@@ -6,21 +6,25 @@ export function getCurrentQuestion(room) {
   return room.questions[room.questionIndex];
 }
 
-export function buildQuestionPayload(room) {
+export function buildQuestionPayload(room, options = {}) {
   const question = getCurrentQuestion(room);
 
   if (!question) {
     return null;
   }
 
+  const revealCorrectAnswer = options.revealCorrectAnswer ?? room.state === "answer_reveal";
+
   return {
     id: question.id,
     number: room.questionIndex + 1,
     totalQuestions: room.questions.length,
     question: question.question,
-    options: question.options,
+    options: [...question.options],
     durationMs: question.durationMs ?? 30000,
-    deadlineAt: room.currentQuestionEndsAt
+    deadlineAt: room.state === "question" ? room.currentQuestionEndsAt : null,
+    correctIndex: revealCorrectAnswer ? question.correctIndex : null,
+    media: question.media ? { ...question.media } : null
   };
 }
 

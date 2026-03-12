@@ -110,7 +110,11 @@ export default function PlayerGamePage() {
   }, [navigate, playerSession, roomCode, socket]);
 
   function handleSubmitAnswer(answerIndex) {
-    if (!playerSession || playerState?.player.hasAnsweredCurrentQuestion) {
+    if (
+      !playerSession ||
+      playerState?.player.hasAnsweredCurrentQuestion ||
+      playerState?.phase === "answer_reveal"
+    ) {
       return;
     }
 
@@ -138,6 +142,10 @@ export default function PlayerGamePage() {
     );
   }
 
+  const isLastQuestion =
+    playerState.question &&
+    playerState.question.number === playerState.question.totalQuestions;
+
   return (
     <main className="page-shell">
       {playerState.phase === "lobby" ? (
@@ -157,21 +165,28 @@ export default function PlayerGamePage() {
               </p>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
-                <p className="muted-label">Sua pontuacao</p>
+                <p className="muted-label">Pontuacao</p>
                 <p className="mt-3 text-4xl font-black text-white">{playerState.player.score}</p>
               </div>
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
                 <p className="muted-label">Jogadores online</p>
                 <p className="mt-3 text-4xl font-black text-white">{playerState.totalConnectedPlayers}</p>
               </div>
+              <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
+                <p className="muted-label">Tema</p>
+                <p className="mt-3 text-sm font-black uppercase tracking-[0.15em] text-white">
+                  {playerState.selectedTheme}
+                </p>
+              </div>
             </div>
           </motion.div>
         </section>
       ) : null}
 
-      {playerState.phase === "question" && playerState.question ? (
+      {(playerState.phase === "question" || playerState.phase === "answer_reveal") &&
+      playerState.question ? (
         <section className="stage-wrap items-center justify-center">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
             <div className="glass-panel p-4">
@@ -179,19 +194,29 @@ export default function PlayerGamePage() {
                 <span className="player-badge">Sala {playerState.roomCode}</span>
                 <span className="player-badge">{playerState.player.score} pts</span>
               </div>
-              <div className="mt-4">
-                <TimerBar
-                  deadlineAt={playerState.question.deadlineAt}
-                  durationMs={playerState.question.durationMs}
-                />
+              <div className="mt-4 space-y-4">
+                <div className="flex items-center justify-between gap-4 text-sm text-slate-300">
+                  <span>Tema: {playerState.selectedTheme}</span>
+                  <span>
+                    {playerState.answeredCount}/{playerState.totalConnectedPlayers} responderam
+                  </span>
+                </div>
+                {playerState.phase === "question" ? (
+                  <TimerBar
+                    deadlineAt={playerState.question.deadlineAt}
+                    durationMs={playerState.question.durationMs}
+                  />
+                ) : null}
               </div>
             </div>
 
             <PlayerAnswerPanel
               question={playerState.question}
               hasAnswered={playerState.player.hasAnsweredCurrentQuestion}
-              selectedAnswer={
-                playerState.answer?.answerIndex ?? selectedAnswer
+              selectedAnswer={playerState.answer?.answerIndex ?? selectedAnswer}
+              showCorrectAnswer={playerState.phase === "answer_reveal"}
+              revealEndsAt={
+                playerState.phase === "answer_reveal" ? playerState.transitionEndsAt : null
               }
               onSubmit={handleSubmitAnswer}
             />
@@ -204,8 +229,12 @@ export default function PlayerGamePage() {
           ranking={playerState.ranking}
           playerId={playerState.player.id}
           autoAdvanceAt={playerState.transitionEndsAt}
-          title="Ranking parcial"
-          subtitle={`Voce esta em ${playerState.player.position} lugar com ${playerState.player.score} pontos.`}
+          title={isLastQuestion ? "Ranking final da partida" : "Ranking parcial"}
+          subtitle={
+            isLastQuestion
+              ? `Voce terminou em ${playerState.player.position} lugar com ${playerState.player.score} pontos.`
+              : `Voce esta em ${playerState.player.position} lugar com ${playerState.player.score} pontos.`
+          }
         />
       ) : null}
 
