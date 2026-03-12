@@ -5,21 +5,21 @@ import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
 const MEDALS = {
   1: {
     label: "Ouro",
-    badge: "🏆",
+    badge: "\u{1F3C6}",
     cardClass: "from-amber-300/35 via-yellow-400/20 to-amber-600/10 border-amber-200/40",
     glowClass: "shadow-[0_22px_46px_rgba(245,158,11,0.24)]",
     textClass: "text-amber-100"
   },
   2: {
     label: "Prata",
-    badge: "🏆",
+    badge: "\u{1F3C6}",
     cardClass: "from-slate-200/22 via-slate-300/12 to-slate-500/10 border-slate-200/25",
     glowClass: "shadow-[0_18px_40px_rgba(203,213,225,0.14)]",
     textClass: "text-slate-100"
   },
   3: {
     label: "Bronze",
-    badge: "🏆",
+    badge: "\u{1F3C6}",
     cardClass: "from-orange-400/25 via-amber-600/12 to-orange-900/10 border-orange-300/25",
     glowClass: "shadow-[0_18px_40px_rgba(249,115,22,0.16)]",
     textClass: "text-orange-100"
@@ -76,7 +76,7 @@ export default function RankingTransition({
   autoAdvanceAt,
   onContinue,
   title = "Ranking parcial",
-  subtitle = "A disputa está esquentando.",
+  subtitle = "A disputa est\u00e1 esquentando.",
   showContinueButton = false
 }) {
   const [countdown, setCountdown] = useState(getCountdown(autoAdvanceAt));
@@ -111,12 +111,12 @@ export default function RankingTransition({
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <div className="text-center">
-          <p className="muted-label">Etapa concluída</p>
+          <p className="muted-label">Etapa conclu\u00edda</p>
           <h1 className="projection-title mt-4">{title}</h1>
           <p className="mt-4 text-lg text-slate-200">{subtitle}</p>
           {autoAdvanceAt ? (
             <p className="mt-3 text-sm uppercase tracking-[0.3em] text-slate-400">
-              Próxima etapa em {countdown}s
+              Pr\u00f3xima etapa em {countdown}s
             </p>
           ) : null}
         </div>
@@ -130,7 +130,7 @@ export default function RankingTransition({
         <div className="glass-panel p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="muted-label">Classificação</p>
+              <p className="muted-label">Classifica\u00e7\u00e3o</p>
               <h3 className="headline-font mt-2 text-2xl font-black text-white">
                 Placar atualizado
               </h3>
@@ -170,7 +170,7 @@ export default function RankingTransition({
               ))
             ) : (
               <div className="rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center text-slate-300">
-                O pódio já está completo acima.
+                O p\u00f3dio j\u00e1 est\u00e1 completo acima.
               </div>
             )}
           </div>

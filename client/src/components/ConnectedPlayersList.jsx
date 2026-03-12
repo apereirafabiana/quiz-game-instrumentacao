@@ -46,7 +46,7 @@ export default function ConnectedPlayersList({ players }) {
 
       {players.length === 0 ? (
         <div className="mt-5 rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-8 text-center text-slate-300">
-          O lobby está esperando os primeiros alunos entrarem.
+          O lobby est\u00e1 esperando os primeiros alunos entrarem.
         </div>
       ) : null}
     </div>

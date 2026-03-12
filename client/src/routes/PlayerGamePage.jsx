@@ -141,7 +141,7 @@ export default function PlayerGamePage() {
   if (!playerState) {
     return (
       <main className="page-shell">
-        <MobileLoading message="Conectando você ao quiz..." />
+        <MobileLoading message="Conectando voc\u00ea ao quiz..." />
       </main>
     );
   }
@@ -164,18 +164,18 @@ export default function PlayerGamePage() {
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] border border-white/10 bg-white/10 text-5xl shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
                 {playerAvatar}
               </div>
-              <p className="muted-label mt-5">Aguardando início</p>
+              <p className="muted-label mt-5">Aguardando in\u00edcio</p>
               <h1 className="headline-font mt-4 text-4xl font-black text-white">
-                Olá, {playerState.player.name}
+                Ol\u00e1, {playerState.player.name}
               </h1>
               <p className="mt-4 text-base text-slate-300">
-                Você entrou na sala {playerState.roomCode}. Assim que o professor iniciar, a pergunta aparece aqui.
+                Voc\u00ea entrou na sala {playerState.roomCode}. Assim que o professor iniciar, a pergunta aparece aqui.
               </p>
             </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
-                <p className="muted-label">Pontuação</p>
+                <p className="muted-label">Pontua\u00e7\u00e3o</p>
                 <p className="mt-3 text-4xl font-black text-white">{playerState.player.score}</p>
               </div>
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
@@ -213,7 +213,7 @@ export default function PlayerGamePage() {
                 </div>
                 <div className="flex items-center justify-between gap-4 text-sm text-slate-300">
                   <span>Tema: {playerState.selectedTheme}</span>
-                  <span>{playerState.player.position}º lugar</span>
+                  <span>{playerState.player.position}\u00ba lugar</span>
                 </div>
                 {playerState.phase === "question" ? (
                   <TimerBar
@@ -243,8 +243,8 @@ export default function PlayerGamePage() {
           title={isLastQuestion ? "Ranking final da partida" : "Ranking parcial"}
           subtitle={
             isLastQuestion
-              ? `Você terminou em ${playerState.player.position}º lugar com ${playerState.player.score} pontos.`
-              : `Você está em ${playerState.player.position}º lugar com ${playerState.player.score} pontos.`
+              ? `Voc\u00ea terminou em ${playerState.player.position}\u00ba lugar com ${playerState.player.score} pontos.`
+              : `Voc\u00ea est\u00e1 em ${playerState.player.position}\u00ba lugar com ${playerState.player.score} pontos.`
           }
         />
       ) : null}

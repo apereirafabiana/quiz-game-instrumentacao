@@ -73,7 +73,7 @@ export default function LobbyScreen({
                       </p>
                       <p className="mt-2 text-sm text-slate-300">
                         {isSelected
-                          ? "Tema selecionado para a proxima partida."
+                          ? "Tema selecionado para a pr\u00f3xima partida."
                           : "Clique para usar este conjunto de perguntas."}
                       </p>
                     </button>
@@ -84,10 +84,10 @@ export default function LobbyScreen({
 
             <div className="grid gap-4 lg:grid-cols-[1.15fr,0.85fr]">
               <div className="rounded-[2rem] border border-white/10 bg-slate-950/35 p-5 sm:p-6">
-                <p className="muted-label">Codigo da sala</p>
+                <p className="muted-label">C\u00f3digo da sala</p>
                 <p className="display-code mt-5">{roomCode}</p>
                 <p className="mt-4 text-sm text-slate-300">
-                  Os alunos tambem podem entrar digitando esse codigo manualmente.
+                  Os alunos tamb\u00e9m podem entrar digitando esse c\u00f3digo manualmente.
                 </p>
               </div>
 
@@ -103,9 +103,9 @@ export default function LobbyScreen({
             <div className="rounded-[2rem] border border-white/10 bg-slate-950/25 p-5 sm:p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pronto para comecar</p>
+                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pronto para come\u00e7ar</p>
                   <p className="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
-                    Quando a lista de participantes estiver certa, inicie o quiz e o telao muda para a primeira pergunta do tema escolhido.
+                    Quando a lista de participantes estiver certa, inicie o quiz e o tel\u00e3o muda para a primeira pergunta do tema escolhido.
                   </p>
                 </div>
                 <button

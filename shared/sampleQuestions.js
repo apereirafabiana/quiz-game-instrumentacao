@@ -1,19 +1,19 @@
 const DEFAULT_DURATION_MS = 30000;
 
-export const DEFAULT_THEME = "CONCEITOS BÃSICOS";
+export const DEFAULT_THEME = "CONCEITOS B\u00c1SICOS";
 export const QUESTION_THEMES = [DEFAULT_THEME, "TERMINOLOGIA"];
 
 export const quizQuestionsByTheme = {
-  "CONCEITOS BÃSICOS": [
+  "CONCEITOS B\u00c1SICOS": [
     {
       id: "CB-01",
       question:
-        "De acordo com o material, qual foi o marco principal da 1Âª RevoluÃ§Ã£o Industrial iniciada na Inglaterra por volta de 1765?",
+        "De acordo com o material, qual foi o marco principal da 1\u00aa Revolu\u00e7\u00e3o Industrial iniciada na Inglaterra por volta de 1765?",
       options: [
         "A descoberta da energia nuclear e o surgimento de computadores.",
-        "O surgimento da eletricidade e do petrÃ³leo como novas formas de energia.",
-        "A interconexÃ£o de todas as etapas de produÃ§Ã£o atravÃ©s da digitalizaÃ§Ã£o.",
-        "A mecanizaÃ§Ã£o dos processos e a invenÃ§Ã£o de mÃ¡quinas a vapor."
+        "O surgimento da eletricidade e do petr\u00f3leo como novas formas de energia.",
+        "A interconex\u00e3o de todas as etapas de produ\u00e7\u00e3o atrav\u00e9s da digitaliza\u00e7\u00e3o.",
+        "A mecaniza\u00e7\u00e3o dos processos e a inven\u00e7\u00e3o de m\u00e1quinas a vapor."
       ],
       correctIndex: 3,
       durationMs: DEFAULT_DURATION_MS
@@ -21,12 +21,12 @@ export const quizQuestionsByTheme = {
     {
       id: "CB-02",
       question:
-        "Qual Ã© a principal caracterÃ­stica que define a IndÃºstria 4.0 em relaÃ§Ã£o Ã s revoluÃ§Ãµes anteriores?",
+        "Qual \u00e9 a principal caracter\u00edstica que define a Ind\u00fastria 4.0 em rela\u00e7\u00e3o \u00e0s revolu\u00e7\u00f5es anteriores?",
       options: [
-        "A introduÃ§Ã£o das linhas de montagem baseadas no Fordismo.",
-        "A interconexÃ£o de etapas produtivas e a utilizaÃ§Ã£o de dados para eficiÃªncia.",
-        "A substituiÃ§Ã£o total de funcionÃ¡rios humanos por robÃ´s autÃ´nomos.",
-        "O uso exclusivo de combustÃ­veis fÃ³sseis para acelerar a produÃ§Ã£o"
+        "A introdu\u00e7\u00e3o das linhas de montagem baseadas no Fordismo.",
+        "A interconex\u00e3o de etapas produtivas e a utiliza\u00e7\u00e3o de dados para efici\u00eancia.",
+        "A substitui\u00e7\u00e3o total de funcion\u00e1rios humanos por rob\u00f4s aut\u00f4nomos.",
+        "O uso exclusivo de combust\u00edveis f\u00f3sseis para acelerar a produ\u00e7\u00e3o."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -34,11 +34,11 @@ export const quizQuestionsByTheme = {
     {
       id: "CB-03",
       question:
-        "Em sistemas de controle, qual a principal diferenÃ§a entre uma malha aberta e uma malha fechada?",
+        "Em sistemas de controle, qual a principal diferen\u00e7a entre uma malha aberta e uma malha fechada?",
       options: [
-        "A malha fechada utiliza a informaÃ§Ã£o da saÃ­da para ajustar a entrada, enquanto a aberta nÃ£o.",
-        "Sistemas de malha aberta sÃ£o exclusivos do mundo fÃ­sico, como motores.",
-        "A malha aberta Ã© mais precisa pois nÃ£o sofre interferÃªncia de sensores.",
+        "A malha fechada utiliza a informa\u00e7\u00e3o da sa\u00edda para ajustar a entrada, enquanto a aberta n\u00e3o.",
+        "Sistemas de malha aberta s\u00e3o exclusivos do mundo f\u00edsico, como motores.",
+        "A malha aberta \u00e9 mais precisa pois n\u00e3o sofre interfer\u00eancia de sensores.",
         "Apenas a malha fechada possui uma planta ou processo definido."
       ],
       correctIndex: 0,
@@ -46,12 +46,13 @@ export const quizQuestionsByTheme = {
     },
     {
       id: "CB-04",
-      question: "Como Ã© definido o conceito de 'VariÃ¡vel Manipulada' (VM) em um processo industrial?",
+      question:
+        "Como \u00e9 definido o conceito de 'Vari\u00e1vel Manipulada' (VM) em um processo industrial?",
       options: [
-        "Ã‰ o valor de referÃªncia que o operador define no painel de controle.",
-        "Ã‰ a variÃ¡vel sobre a qual o controlador atua para manter a variÃ¡vel controlada no valor desejado.",
-        "Ã‰ a condiÃ§Ã£o externa imprevisÃ­vel que afeta negativamente o desempenho do processo.",
-        "Ã‰ o sinal que o sensor envia para indicar o estado atual do sistema."
+        "\u00c9 o valor de refer\u00eancia que o operador define no painel de controle.",
+        "\u00c9 a vari\u00e1vel sobre a qual o controlador atua para manter a vari\u00e1vel controlada no valor desejado.",
+        "\u00c9 a condi\u00e7\u00e3o externa imprevis\u00edvel que afeta negativamente o desempenho do processo.",
+        "\u00c9 o sinal que o sensor envia para indicar o estado atual do sistema."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -59,29 +60,29 @@ export const quizQuestionsByTheme = {
     {
       id: "CB-05",
       question:
-        "No exemplo do sistema de aquecimento de Ã¡gua, qual alternativa identifica corretamente as variÃ¡veis?",
+        "No exemplo do sistema de aquecimento de \u00e1gua, qual alternativa identifica corretamente as vari\u00e1veis?",
       options: [
-        "O vapor Ã© o Set Point e a Ã¡gua aquecida Ã© o DistÃºrbio.",
-        "A temperatura da Ã¡gua Ã© a VariÃ¡vel de Processo e a vazÃ£o de vapor Ã© a VariÃ¡vel Manipulada.",
-        "A entrada de Ã¡gua fria Ã© a VariÃ¡vel Manipulada.",
-        "A vÃ¡lvula manual Ã© o sensor e o termÃ´metro Ã© o atuador."
+        "O vapor \u00e9 o Set Point e a \u00e1gua aquecida \u00e9 o Dist\u00farbio.",
+        "A temperatura da \u00e1gua \u00e9 a Vari\u00e1vel de Processo e a vaz\u00e3o de vapor \u00e9 a Vari\u00e1vel Manipulada.",
+        "A entrada de \u00e1gua fria \u00e9 a Vari\u00e1vel Manipulada.",
+        "A v\u00e1lvula manual \u00e9 o sensor e o term\u00f4metro \u00e9 o atuador."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS,
       media: {
         type: "image",
         src: "/figura-01.png",
-        alt: "Figura 01 do exemplo de aquecimento de Ã¡gua com as variÃ¡veis do processo."
+        alt: "Figura 01 do exemplo de aquecimento de \u00e1gua com as vari\u00e1veis do processo."
       }
     },
     {
       id: "CB-06",
-      question: "Qual Ã© a funÃ§Ã£o de um instrumento classificado como 'Cego'?",
+      question: "Qual \u00e9 a fun\u00e7\u00e3o de um instrumento classificado como 'Cego'?",
       options: [
-        "Ele nÃ£o possui uma indicaÃ§Ã£o local visÃ­vel da variÃ¡vel que estÃ¡ medindo.",
-        "Ele converte sinais mecÃ¢nicos em sinais pneumÃ¡ticos exclusivamente.",
-        "Ele Ã© um instrumento quebrado que nÃ£o consegue detectar sinais.",
-        "Ele serve apenas para registrar dados em papel para anÃ¡lise posterior."
+        "Ele n\u00e3o possui uma indica\u00e7\u00e3o local vis\u00edvel da vari\u00e1vel que est\u00e1 medindo.",
+        "Ele converte sinais mec\u00e2nicos em sinais pneum\u00e1ticos exclusivamente.",
+        "Ele \u00e9 um instrumento quebrado que n\u00e3o consegue detectar sinais.",
+        "Ele serve apenas para registrar dados em papel para an\u00e1lise posterior."
       ],
       correctIndex: 0,
       durationMs: DEFAULT_DURATION_MS
@@ -89,24 +90,24 @@ export const quizQuestionsByTheme = {
     {
       id: "CB-07",
       question:
-        "Historicamente, qual foi a contribuiÃ§Ã£o de Denis Papin para a engenharia de controle em 1681?",
+        "Historicamente, qual foi a contribui\u00e7\u00e3o de Denis Papin para a engenharia de controle em 1681?",
       options: [
-        "O desenvolvimento do primeiro sistema de controle de nÃ­vel por boia.",
-        "A invenÃ§Ã£o da vÃ¡lvula de seguranÃ§a para regulaÃ§Ã£o da pressÃ£o de vapor.",
-        "A descoberta da realimentaÃ§Ã£o negativa em circuitos eletrÃ´nicos.",
-        "A criaÃ§Ã£o do modelo de produÃ§Ã£o flexÃ­vel conhecido como Toyotismo."
+        "O desenvolvimento do primeiro sistema de controle de n\u00edvel por boia.",
+        "A inven\u00e7\u00e3o da v\u00e1lvula de seguran\u00e7a para regula\u00e7\u00e3o da press\u00e3o de vapor.",
+        "A descoberta da realimenta\u00e7\u00e3o negativa em circuitos eletr\u00f4nicos.",
+        "A cria\u00e7\u00e3o do modelo de produ\u00e7\u00e3o flex\u00edvel conhecido como Toyotismo."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "CB-08",
-      question: "O que define um instrumento 'Transdutor' na instrumentaÃ§Ã£o industrial?",
+      question: "O que define um instrumento 'Transdutor' na instrumenta\u00e7\u00e3o industrial?",
       options: [
-        "Um dispositivo que apenas mostra o valor da variÃ¡vel de forma analÃ³gica.",
-        "Um instrumento que recebe informaÃ§Ãµes em uma forma fÃ­sica e as converte em um sinal de saÃ­da resultante.",
-        "Um elemento que atua diretamente no processo para fechar uma vÃ¡lvula.",
-        "Um sensor que nÃ£o precisa de energia externa para funcionar."
+        "Um dispositivo que apenas mostra o valor da vari\u00e1vel de forma anal\u00f3gica.",
+        "Um instrumento que recebe informa\u00e7\u00f5es em uma forma f\u00edsica e as converte em um sinal de sa\u00edda resultante.",
+        "Um elemento que atua diretamente no processo para fechar uma v\u00e1lvula.",
+        "Um sensor que n\u00e3o precisa de energia externa para funcionar."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -114,7 +115,7 @@ export const quizQuestionsByTheme = {
     {
       id: "CB-09",
       question:
-        "Qual destes componentes Ã© responsÃ¡vel por comparar a variÃ¡vel de processo com o Set Point e decidir a aÃ§Ã£o a ser tomada?",
+        "Qual destes componentes \u00e9 respons\u00e1vel por comparar a vari\u00e1vel de processo com o Set Point e decidir a a\u00e7\u00e3o a ser tomada?",
       options: ["Controlador.", "Transmissor.", "Atuador.", "Sensor."],
       correctIndex: 0,
       durationMs: DEFAULT_DURATION_MS
@@ -122,9 +123,9 @@ export const quizQuestionsByTheme = {
     {
       id: "CB-10",
       question:
-        "Considere um elevador que deve parar no 4Âº andar. Se ele para exatamente no 4Âº andar apÃ³s um tempo, como chamamos o estado final da sua resposta?",
+        "Considere um elevador que deve parar no 4\u00ba andar. Se ele para exatamente no 4\u00ba andar ap\u00f3s um tempo, como chamamos o estado final da sua resposta?",
       options: [
-        "Resposta transitÃ³ria.",
+        "Resposta transit\u00f3ria.",
         "Comando de entrada.",
         "Resposta em regime permanente.",
         "Erro de regime permanente."
@@ -137,20 +138,20 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-01",
       question:
-        "Um sensor de temperatura possui uma faixa nominal (range) de -100 ÂºC a 500 ÂºC. Qual Ã© o alcance (span) desse instrumento?",
-      options: ["500 ÂºC", "-600ÂºC", "400 ÂºC", "600Âº C"],
+        "Um sensor de temperatura possui uma faixa nominal (range) de -100 \u00b0C a 500 \u00b0C. Qual \u00e9 o alcance (span) desse instrumento?",
+      options: ["500 \u00b0C", "-600 \u00b0C", "400 \u00b0C", "600 \u00b0C"],
       correctIndex: 3,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "TM-02",
       question:
-        "Como Ã© definida a 'Sensibilidade' de um instrumento de mediÃ§Ã£o de acordo com o INMETRO?",
+        "Como \u00e9 definida a 'Sensibilidade' de um instrumento de medi\u00e7\u00e3o de acordo com o INMETRO?",
       options: [
-        "O grau de concordÃ¢ncia entre o resultado da mediÃ§Ã£o e o valor verdadeiro.",
-        "A menor diferenÃ§a entre indicaÃ§Ãµes que pode ser percebida.",
-        "A resposta do instrumento dividida pela correspondente variaÃ§Ã£o no estÃ­mulo.",
-        "A diferenÃ§a entre o valor medido e o valor real da variÃ¡vel."
+        "O grau de concord\u00e2ncia entre o resultado da medi\u00e7\u00e3o e o valor verdadeiro.",
+        "A menor diferen\u00e7a entre indica\u00e7\u00f5es que pode ser percebida.",
+        "A resposta do instrumento dividida pela correspondente varia\u00e7\u00e3o no est\u00edmulo.",
+        "A diferen\u00e7a entre o valor medido e o valor real da vari\u00e1vel."
       ],
       correctIndex: 2,
       durationMs: DEFAULT_DURATION_MS
@@ -158,7 +159,7 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-03",
       question:
-        "Um voltÃ­metro digital possui um display que exibe duas casas decimais (ex: 0,00V). Qual Ã© a resoluÃ§Ã£o deste instrumento?",
+        "Um volt\u00edmetro digital possui um display que exibe duas casas decimais (ex: 0,00V). Qual \u00e9 a resolu\u00e7\u00e3o deste instrumento?",
       options: ["0,1V", "0,01 V", "1V", "0,001"],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -166,7 +167,7 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-04",
       question:
-        "O fenÃ´meno onde a saÃ­da de um transmissor difere para uma mesma entrada dependendo se o sinal Ã© aplicado de forma ascendente ou descendente Ã© chamado de:",
+        "O fen\u00f4meno onde a sa\u00edda de um transmissor difere para uma mesma entrada dependendo se o sinal \u00e9 aplicado de forma ascendente ou descendente \u00e9 chamado de:",
       options: ["Desvio de Zero", "Histerese", "Zona Morta", "Repetibilidade"],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -174,24 +175,24 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-05",
       question:
-        "Um instrumento com range de 50 ÂºC a 150 ÂºC possui uma exatidÃ£o de Â±0,5 % do span. Se ele indica 80 ÂºC, em qual intervalo a temperatura real se encontra?",
+        "Um instrumento com range de 50 \u00b0C a 150 \u00b0C possui uma exatid\u00e3o de \u00b10,5 % do span. Se ele indica 80 \u00b0C, em qual intervalo a temperatura real se encontra?",
       options: [
-        "Entre 79,6 ÂºC e 80,4 ÂºC.",
-        "Entre 79,25 ÂºC e 80,75 ÂºC.",
-        "Entre 79,5 ÂºC e 80,5 ÂºC.",
-        "Entre 79,5 ÂºC e 80,25 ÂºC."
+        "Entre 79,6 \u00b0C e 80,4 \u00b0C.",
+        "Entre 79,25 \u00b0C e 80,75 \u00b0C.",
+        "Entre 79,5 \u00b0C e 80,5 \u00b0C.",
+        "Entre 79,5 \u00b0C e 80,25 \u00b0C."
       ],
       correctIndex: 2,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "TM-06",
-      question: "Qual Ã© a principal diferenÃ§a entre erro sistemÃ¡tico e erro aleatÃ³rio?",
+      question: "Qual \u00e9 a principal diferen\u00e7a entre erro sistem\u00e1tico e erro aleat\u00f3rio?",
       options: [
-        "Erros aleatÃ³rios sÃ£o sempre positivos, enquanto sistemÃ¡ticos sÃ£o negativos.",
-        "O erro sistemÃ¡tico Ã© imprevisÃ­vel, enquanto o aleatÃ³rio Ã© constante.",
-        "O erro sistemÃ¡tico mantÃ©m-se constante ou varia de forma previsÃ­vel, enquanto o aleatÃ³rio varia de forma imprevisÃ­vel.",
-        "Somente o erro aleatÃ³rio pode ser chamado de erro absoluto."
+        "Erros aleat\u00f3rios s\u00e3o sempre positivos, enquanto sistem\u00e1ticos s\u00e3o negativos.",
+        "O erro sistem\u00e1tico \u00e9 imprevis\u00edvel, enquanto o aleat\u00f3rio \u00e9 constante.",
+        "O erro sistem\u00e1tico mant\u00e9m-se constante ou varia de forma previs\u00edvel, enquanto o aleat\u00f3rio varia de forma imprevis\u00edvel.",
+        "Somente o erro aleat\u00f3rio pode ser chamado de erro absoluto."
       ],
       correctIndex: 2,
       durationMs: DEFAULT_DURATION_MS
@@ -199,10 +200,10 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-07",
       question:
-        "Um sensor de nÃ­vel Ã© ajustado para medir entre 1m e 3m. Como sÃ£o chamados esses limites de ajuste configurados no sensor?",
+        "Um sensor de n\u00edvel \u00e9 ajustado para medir entre 1m e 3m. Como s\u00e3o chamados esses limites de ajuste configurados no sensor?",
       options: [
         "Zona Morta Superior e Inferior",
-        "Span MÃ¡ximo",
+        "Span M\u00e1ximo",
         "LRL e URL",
         "Zero e Fundo de Escala Nominais"
       ],
@@ -211,12 +212,12 @@ export const quizQuestionsByTheme = {
     },
     {
       id: "TM-08",
-      question: "Sobre o 'Zero do instrumento', Ã© correto afirmar que:",
+      question: "Sobre o 'Zero do instrumento', \u00e9 correto afirmar que:",
       options: [
-        "Ã‰ obrigatoriamente o valor numÃ©rico zero na escala da variÃ¡vel.",
-        "Representa o limite inferior da faixa nominal de mediÃ§Ã£o.",
-        "Sempre coincide com o valor de vÃ¡cuo absoluto em sensores de pressÃ£o.",
-        "Ã‰ o valor mÃ¡ximo que o instrumento pode medir com seguranÃ§a."
+        "\u00c9 obrigatoriamente o valor num\u00e9rico zero na escala da vari\u00e1vel.",
+        "Representa o limite inferior da faixa nominal de medi\u00e7\u00e3o.",
+        "Sempre coincide com o valor de v\u00e1cuo absoluto em sensores de press\u00e3o.",
+        "\u00c9 o valor m\u00e1ximo que o instrumento pode medir com seguran\u00e7a."
       ],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
@@ -224,16 +225,16 @@ export const quizQuestionsByTheme = {
     {
       id: "TM-09",
       question:
-        "Um instrumento possui um range de 0 ÂºC a 200 ÂºC e uma zona morta de Â±0,1% do span. Qual Ã© o menor valor de variaÃ§Ã£o na temperatura que garantidamente provocarÃ¡ uma resposta na saÃ­da?",
-      options: ["0,2 ÂºC", "2 ÂºC", "0,02 ÂºC", "0,1 ÂºC"],
+        "Um instrumento possui um range de 0 \u00b0C a 200 \u00b0C e uma zona morta de \u00b10,1% do span. Qual \u00e9 o menor valor de varia\u00e7\u00e3o na temperatura que garantidamente provocar\u00e1 uma resposta na sa\u00edda?",
+      options: ["0,2 \u00b0C", "2 \u00b0C", "0,02 \u00b0C", "0,1 \u00b0C"],
       correctIndex: 0,
       durationMs: DEFAULT_DURATION_MS
     },
     {
       id: "TM-10",
       question:
-        "Um voltÃ­metro analÃ³gico possui uma classe de exatidÃ£o de 1,5% e fundo de escala de 300V. Qual o erro mÃ¡ximo absoluto permitido para este instrumento?",
-      options: ["Â±1,5V", "Â±4,5V", "Â±45V", "Â±3V"],
+        "Um volt\u00edmetro anal\u00f3gico possui uma classe de exatid\u00e3o de 1,5% e fundo de escala de 300V. Qual o erro m\u00e1ximo absoluto permitido para este instrumento?",
+      options: ["\u00b11,5V", "\u00b14,5V", "\u00b145V", "\u00b13V"],
       correctIndex: 1,
       durationMs: DEFAULT_DURATION_MS
     }

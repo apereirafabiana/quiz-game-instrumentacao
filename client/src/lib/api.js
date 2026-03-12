@@ -15,7 +15,7 @@ export async function fetchServerMeta() {
   const response = await fetch(`${API_BASE_URL}/api/meta`);
 
   if (!response.ok) {
-    throw new Error("Nao foi possivel carregar os dados do servidor.");
+    throw new Error("N\u00e3o foi poss\u00edvel carregar os dados do servidor.");
   }
 
   return response.json();

@@ -197,7 +197,7 @@ export function createGameManager({ io, roomStore }) {
     const room = roomStore.getRoom(normalizedCode);
 
     if (!room) {
-      const error = new Error("Sala não encontrada.");
+      const error = new Error("Sala n\u00e3o encontrada.");
       error.code = "ROOM_NOT_FOUND";
       throw error;
     }
@@ -391,8 +391,8 @@ export function createGameManager({ io, roomStore }) {
     if (room.state !== "lobby" && !existingPlayer) {
       const error = new Error(
         room.state === "final"
-          ? "O quiz já terminou nesta sala."
-          : "O quiz já começou. Entradas novas foram bloqueadas."
+          ? "O quiz j\u00e1 terminou nesta sala."
+          : "O quiz j\u00e1 come\u00e7ou. Entradas novas foram bloqueadas."
       );
       error.code = "ROOM_LOCKED";
       throw error;
@@ -442,13 +442,13 @@ export function createGameManager({ io, roomStore }) {
     const room = getRoomOrThrow(roomCode);
 
     if (room.state !== "lobby") {
-      const error = new Error("O tema só pode ser alterado antes do início do quiz.");
+      const error = new Error("O tema s\u00f3 pode ser alterado antes do in\u00edcio do quiz.");
       error.code = "THEME_LOCKED";
       throw error;
     }
 
     if (!QUESTION_THEMES.includes(theme)) {
-      const error = new Error("Tema de quiz inválido.");
+      const error = new Error("Tema de quiz inv\u00e1lido.");
       error.code = "INVALID_THEME";
       throw error;
     }
@@ -469,7 +469,7 @@ export function createGameManager({ io, roomStore }) {
     const room = getRoomOrThrow(roomCode);
 
     if (room.state !== "lobby") {
-      const error = new Error("O quiz já foi iniciado.");
+      const error = new Error("O quiz j\u00e1 foi iniciado.");
       error.code = "QUIZ_ALREADY_STARTED";
       throw error;
     }
@@ -483,7 +483,7 @@ export function createGameManager({ io, roomStore }) {
     room.questions = getQuestionsForTheme(room.selectedTheme);
 
     if (room.questions.length === 0) {
-      const error = new Error("Este tema ainda não possui perguntas disponíveis.");
+      const error = new Error("Este tema ainda n\u00e3o possui perguntas dispon\u00edveis.");
       error.code = "EMPTY_THEME";
       throw error;
     }
@@ -502,7 +502,7 @@ export function createGameManager({ io, roomStore }) {
     const room = getRoomOrThrow(roomCode);
 
     if (room.state !== "question") {
-      const error = new Error("Não há pergunta ativa neste momento.");
+      const error = new Error("N\u00e3o h\u00e1 pergunta ativa neste momento.");
       error.code = "NO_ACTIVE_QUESTION";
       throw error;
     }
@@ -510,13 +510,13 @@ export function createGameManager({ io, roomStore }) {
     const player = room.players.get(playerId);
 
     if (!player) {
-      const error = new Error("Jogador não encontrado nesta sala.");
+      const error = new Error("Jogador n\u00e3o encontrado nesta sala.");
       error.code = "PLAYER_NOT_FOUND";
       throw error;
     }
 
     if (hasPlayerAnsweredCurrentQuestion(room, playerId)) {
-      const error = new Error("Você já respondeu esta pergunta.");
+      const error = new Error("Voc\u00ea j\u00e1 respondeu esta pergunta.");
       error.code = "ANSWER_ALREADY_SENT";
       throw error;
     }

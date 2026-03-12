@@ -105,7 +105,7 @@ export default function TeacherPage() {
   const visibleJoinUrl = formatJoinUrl(joinUrl);
 
   const networkHint = visibleJoinUrl
-    ? `Se o QR nao abrir, digite ${visibleJoinUrl} no celular. Professor e alunos precisam estar no mesmo Wi-Fi; se ainda falhar, libere a porta 5173 no firewall do Windows.`
+    ? `Se o QR n\u00e3o abrir, digite ${visibleJoinUrl} no celular. Professor e alunos precisam estar no mesmo Wi-Fi; se ainda falhar, libere a porta 5173 no firewall do Windows.`
     : "Professor e alunos precisam estar no mesmo Wi-Fi para entrar na sala em tempo real.";
 
   const isLastQuestion =
@@ -185,8 +185,8 @@ export default function TeacherPage() {
               title={isLastQuestion ? "Ranking final da partida" : "Ranking da rodada"}
               subtitle={
                 isLastQuestion
-                  ? "A classificacao completa foi atualizada. O podio final aparece a seguir."
-                  : "A classificacao parcial aparece depois da resposta correta e antes da proxima pergunta."
+                  ? "A classifica\u00e7\u00e3o completa foi atualizada. O p\u00f3dio final aparece a seguir."
+                  : "A classifica\u00e7\u00e3o parcial aparece depois da resposta correta e antes da pr\u00f3xima pergunta."
               }
             />
           ) : null}
