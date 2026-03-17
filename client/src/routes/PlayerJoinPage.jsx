@@ -54,7 +54,7 @@ export default function PlayerJoinPage() {
     const normalizedName = name.trim();
 
     if (!normalizedRoomCode) {
-      setErrorMessage("Informe o c\u00f3digo da sala.");
+      setErrorMessage("Informe o código da sala.");
       return;
     }
 
@@ -89,14 +89,14 @@ export default function PlayerJoinPage() {
               Entre na sala
             </h1>
             <p className="mt-4 text-base text-slate-300">
-              Digite o c\u00f3digo exibido no tel\u00e3o, escolha seu avatar e use o nome que vai aparecer para a turma.
+              Digite o código exibido no telão, escolha seu avatar e use o nome que vai aparecer para a turma.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>
               <label htmlFor="roomCode" className="muted-label">
-                C\u00f3digo da sala
+                Código da sala
               </label>
               <input
                 id="roomCode"
@@ -121,7 +121,7 @@ export default function PlayerJoinPage() {
                 onChange={(event) => setName(event.target.value)}
                 className="input-field mt-2"
                 maxLength={24}
-                placeholder="Ex.: Jo\u00e3o \u{1F527}, Maria \u2699\uFE0F"
+                placeholder="Ex.: João 🔧, Maria ⚙️"
                 autoComplete="nickname"
               />
             </div>

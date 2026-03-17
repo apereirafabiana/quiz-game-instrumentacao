@@ -17,8 +17,8 @@ const CONFETTI = [
 
 const PODIUM_STYLES = {
   1: {
-    label: "Campe\u00e3o",
-    trophy: "\u{1F3C6}",
+    label: "Campeão",
+    trophy: "🏆",
     heightClass: "h-64",
     cardClass: "from-amber-300/38 via-yellow-400/24 to-amber-700/12 border-amber-200/45",
     glowClass: "shadow-[0_28px_70px_rgba(245,158,11,0.34)] ring-2 ring-amber-200/35",
@@ -27,7 +27,7 @@ const PODIUM_STYLES = {
   },
   2: {
     label: "Vice",
-    trophy: "\u{1F3C6}",
+    trophy: "🏆",
     heightClass: "h-52",
     cardClass: "from-slate-200/22 via-slate-300/12 to-slate-500/10 border-slate-200/25",
     glowClass: "shadow-[0_20px_50px_rgba(203,213,225,0.18)]",
@@ -36,7 +36,7 @@ const PODIUM_STYLES = {
   },
   3: {
     label: "Top 3",
-    trophy: "\u{1F3C6}",
+    trophy: "🏆",
     heightClass: "h-44",
     cardClass: "from-orange-400/28 via-amber-500/14 to-orange-900/12 border-orange-300/25",
     glowClass: "shadow-[0_18px_44px_rgba(249,115,22,0.18)]",
@@ -84,7 +84,7 @@ function PodiumColumn({ entry, playerId }) {
         className={`flex w-full origin-bottom flex-col items-center justify-center rounded-t-[2.2rem] border border-white/10 bg-gradient-to-b px-4 py-4 text-white ${style.pedestalClass} ${style.heightClass}`}
       >
         <span className="text-sm font-bold uppercase tracking-[0.3em] text-white/80">Lugar</span>
-        <span className="headline-font mt-2 text-5xl font-black">{entry.position}\u00ba</span>
+        <span className="headline-font mt-2 text-5xl font-black">{entry.position}º</span>
       </motion.div>
     </div>
   );
@@ -125,9 +125,9 @@ export default function FinalPodium({
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-6">
         <div className="text-center">
           <p className="muted-label">Fim de jogo</p>
-          <h1 className="projection-title mt-4">P\u00f3dio final</h1>
+          <h1 className="projection-title mt-4">Pódio final</h1>
           <p className="mt-4 text-lg text-slate-200">
-            A partida terminou em clima de competi\u00e7\u00e3o, com destaque total para os tr\u00eas melhores colocados.
+            A partida terminou em clima de competição, com destaque total para os três melhores colocados.
           </p>
         </div>
 
@@ -142,7 +142,7 @@ export default function FinalPodium({
         <div className="glass-panel p-5 sm:p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="muted-label">Demais coloca\u00e7\u00f5es</p>
+              <p className="muted-label">Demais colocações</p>
               <h3 className="headline-font mt-2 text-2xl font-black text-white">
                 Ranking completo
               </h3>
@@ -180,7 +180,7 @@ export default function FinalPodium({
               ))
             ) : (
               <div className="rounded-3xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center text-slate-300">
-                S\u00f3 houve tr\u00eas participantes nesta rodada.
+                Só houve três participantes nesta rodada.
               </div>
             )}
           </div>

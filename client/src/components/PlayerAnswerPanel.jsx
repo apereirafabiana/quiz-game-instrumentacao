@@ -19,14 +19,14 @@ export default function PlayerAnswerPanel({
 
   if (showCorrectAnswer) {
     if (hasAnswered && selectedWasCorrect) {
-      feedbackMessage = `Parab\u00e9ns! Voc\u00ea acertou a alternativa ${correctLetter}.`;
+      feedbackMessage = `Parabéns! Você acertou a alternativa ${correctLetter}.`;
     } else if (hasAnswered && selectedLetter) {
-      feedbackMessage = `Quase! Voc\u00ea marcou ${selectedLetter}, mas a correta era ${correctLetter}.`;
+      feedbackMessage = `Quase! Você marcou ${selectedLetter}, mas a correta era ${correctLetter}.`;
     } else {
       feedbackMessage = `Tempo encerrado. A correta era a alternativa ${correctLetter}.`;
     }
   } else if (hasAnswered) {
-    feedbackMessage = "Resposta enviada. Agora \u00e9 s\u00f3 aguardar a corre\u00e7\u00e3o e o ranking.";
+    feedbackMessage = "Resposta enviada. Agora é só aguardar a correção e o ranking.";
   }
 
   return (

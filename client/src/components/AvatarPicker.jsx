@@ -8,7 +8,7 @@ export default function AvatarPicker({ value, onChange }) {
         <div>
           <p className="muted-label">Avatar</p>
           <p className="mt-2 text-sm text-slate-300">
-            Escolha um emoji para aparecer no lobby, no ranking e no p\u00f3dio.
+            Escolha um emoji para aparecer no lobby, no ranking e no pódio.
           </p>
         </div>
         <div className="flex h-14 w-14 items-center justify-center rounded-[1.4rem] border border-white/10 bg-slate-950/40 text-3xl shadow-[0_12px_24px_rgba(15,23,42,0.18)]">

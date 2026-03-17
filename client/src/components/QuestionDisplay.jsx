@@ -110,7 +110,7 @@ export default function QuestionDisplay({
         <div className="flex flex-col items-center gap-4">
           <div className="rounded-full border border-white/10 bg-white/10 px-5 py-3 text-base font-semibold text-slate-100">
             {showCorrectAnswer
-              ? "Professor no controle: avance para o ranking quando terminar o coment\u00e1rio."
+              ? "Professor no controle: avance para o ranking quando terminar o comentário."
               : `${answeredCount} de ${totalPlayers} responderam`}
           </div>
           <button type="button" onClick={onForceContinue} className="secondary-button">
