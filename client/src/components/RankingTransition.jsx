@@ -50,7 +50,9 @@ function TopCard({ entry, playerId }) {
         <span className={`text-xs font-bold uppercase tracking-[0.3em] ${medal.textClass}`}>
           {medal.label}
         </span>
-        <span className={`text-3xl drop-shadow-[0_8px_18px_rgba(15,23,42,0.22)] ${medal.textClass}`}>
+        <span
+          className={`text-3xl drop-shadow-[0_8px_18px_rgba(15,23,42,0.22)] ${medal.textClass}`}
+        >
           {medal.badge}
         </span>
       </div>

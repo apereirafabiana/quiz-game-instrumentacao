@@ -1,6 +1,7 @@
 import {
   DEFAULT_THEME,
   QUESTION_THEMES,
+  getThemeQuestionCounts,
   getQuestionsForTheme
 } from "../../../shared/sampleQuestions.js";
 import { DEFAULT_AVATAR, normalizeAvatar } from "../../../shared/avatarOptions.js";
@@ -103,6 +104,8 @@ function hasMoreQuestions(room) {
 }
 
 export function createGameManager({ io, roomStore }) {
+  const themeQuestionCounts = getThemeQuestionCounts();
+
   function emitRoomEvent(roomCode, eventName, payload) {
     io.to(roomCode).emit(eventName, payload);
   }
@@ -121,6 +124,7 @@ export function createGameManager({ io, roomStore }) {
       createdAt: room.createdAt,
       selectedTheme: room.selectedTheme,
       availableThemes: QUESTION_THEMES,
+      themeQuestionCounts,
       players: ranking,
       connectedPlayersCount,
       canStartQuiz:
@@ -422,7 +426,8 @@ export function createGameManager({ io, roomStore }) {
       roomCode: room.code,
       playerId: player.id,
       playerName: player.name,
-      playerAvatar: player.avatar
+      playerAvatar: player.avatar,
+      playerState: buildPlayerState(room, player)
     });
 
     emitRoomEvent(room.code, "player_joined", {
@@ -515,13 +520,44 @@ export function createGameManager({ io, roomStore }) {
       throw error;
     }
 
-    if (hasPlayerAnsweredCurrentQuestion(room, playerId)) {
+    const currentQuestion = getCurrentQuestion(room);
+
+    if (!currentQuestion) {
+      const error = new Error("Não há pergunta ativa neste momento.");
+      error.code = "NO_ACTIVE_QUESTION";
+      throw error;
+    }
+
+    if (
+      !Number.isInteger(answerIndex) ||
+      answerIndex < 0 ||
+      answerIndex >= currentQuestion.options.length
+    ) {
+      const error = new Error("Alternativa inválida.");
+      error.code = "INVALID_ANSWER";
+      throw error;
+    }
+
+    const existingAnswer = room.answersByQuestion[currentQuestion.id]?.[playerId] ?? null;
+
+    if (existingAnswer) {
+      if (existingAnswer.answerIndex === answerIndex) {
+        return {
+          accepted: true,
+          duplicate: true,
+          answer: {
+            answerIndex: existingAnswer.answerIndex,
+            isCorrect: existingAnswer.isCorrect,
+            pointsAwarded: existingAnswer.pointsAwarded
+          }
+        };
+      }
+
       const error = new Error("Você já respondeu esta pergunta.");
       error.code = "ANSWER_ALREADY_SENT";
       throw error;
     }
 
-    const currentQuestion = getCurrentQuestion(room);
     const elapsedMs = Date.now() - room.currentQuestionStartedAt;
     const isCorrect = currentQuestion.correctIndex === answerIndex;
     const pointsAwarded = calculateAnswerScore({
@@ -552,7 +588,8 @@ export function createGameManager({ io, roomStore }) {
       io.to(player.socketId).emit("answer_received", {
         roomCode: room.code,
         pointsAwarded,
-        isCorrect
+        isCorrect,
+        answerIndex
       });
     }
 
@@ -574,6 +611,16 @@ export function createGameManager({ io, roomStore }) {
       });
       endCurrentQuestion(room.code, "all_answered");
     }
+
+    return {
+      accepted: true,
+      duplicate: false,
+      answer: {
+        answerIndex,
+        isCorrect,
+        pointsAwarded
+      }
+    };
   }
 
   function restartQuiz(roomCode) {

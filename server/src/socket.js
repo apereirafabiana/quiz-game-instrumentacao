@@ -1,11 +1,15 @@
 import { createGameManager } from "./game/gameManager.js";
 import { createRoomStore } from "./game/roomStore.js";
 
-function emitSocketError(socket, error) {
-  socket.emit("room_error", {
+function buildSocketErrorPayload(error) {
+  return {
     code: error.code ?? "UNKNOWN_ERROR",
     message: error.message ?? "Ocorreu um erro inesperado."
-  });
+  };
+}
+
+function emitSocketError(socket, error) {
+  socket.emit("room_error", buildSocketErrorPayload(error));
 }
 
 export function registerSocketHandlers(io) {
@@ -61,13 +65,28 @@ export function registerSocketHandlers(io) {
       }
     });
 
-    socket.on("submit_answer", (payload = {}) => {
+    socket.on("submit_answer", (payload = {}, callback) => {
       try {
-        gameManager.submitAnswer(payload.roomCode, {
+        const result = gameManager.submitAnswer(payload.roomCode, {
           playerId: payload.playerId,
           answerIndex: payload.answerIndex
         });
+
+        if (typeof callback === "function") {
+          callback({
+            ok: true,
+            ...result
+          });
+        }
       } catch (error) {
+        if (typeof callback === "function") {
+          callback({
+            ok: false,
+            ...buildSocketErrorPayload(error)
+          });
+          return;
+        }
+
         emitSocketError(socket, error);
       }
     });

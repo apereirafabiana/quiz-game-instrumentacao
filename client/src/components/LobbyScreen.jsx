@@ -10,10 +10,13 @@ export default function LobbyScreen({
   networkHint,
   selectedTheme,
   availableThemes,
+  themeQuestionCounts,
   onSelectTheme,
   onStartQuiz,
   canStartQuiz
 }) {
+  const selectedThemeCount = themeQuestionCounts?.[selectedTheme] ?? 0;
+
   return (
     <motion.section
       key="teacher-lobby"
@@ -35,7 +38,8 @@ export default function LobbyScreen({
                 Sala pronta para receber jogadores.
               </h1>
               <p className="mt-4 max-w-2xl text-base text-slate-200 sm:text-lg">
-                Escolha o tema, mostre o QR Code, acompanhe a entrada da turma e inicie quando todos estiverem prontos.
+                Escolha o tema, mostre o QR Code, acompanhe a entrada da turma e inicie quando
+                todos estiverem prontos.
               </p>
             </div>
 
@@ -50,12 +54,15 @@ export default function LobbyScreen({
                     Apenas as perguntas do tema selecionado entram na partida atual.
                   </p>
                 </div>
-                <span className="player-badge">10 perguntas por tema</span>
+                <span className="player-badge">
+                  {selectedThemeCount} pergunta{selectedThemeCount === 1 ? "" : "s"} neste tema
+                </span>
               </div>
 
               <div className="mt-5 grid gap-3 md:grid-cols-2">
                 {availableThemes.map((theme) => {
                   const isSelected = theme === selectedTheme;
+                  const questionCount = themeQuestionCounts?.[theme] ?? 0;
 
                   return (
                     <button
@@ -68,9 +75,14 @@ export default function LobbyScreen({
                           : "border-white/10 bg-slate-950/30 hover:border-white/20 hover:bg-white/10"
                       }`}
                     >
-                      <p className="text-sm font-black uppercase tracking-[0.2em] text-white">
-                        {theme}
-                      </p>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-sm font-black uppercase tracking-[0.2em] text-white">
+                          {theme}
+                        </p>
+                        <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-100">
+                          {questionCount}
+                        </span>
+                      </div>
                       <p className="mt-2 text-sm text-slate-300">
                         {isSelected
                           ? "Tema selecionado para a próxima partida."
@@ -103,9 +115,12 @@ export default function LobbyScreen({
             <div className="rounded-[2rem] border border-white/10 bg-slate-950/25 p-5 sm:p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pronto para começar</p>
+                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
+                    Pronto para começar
+                  </p>
                   <p className="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
-                    Quando a lista de participantes estiver certa, inicie o quiz e o telão muda para a primeira pergunta do tema escolhido.
+                    Quando a lista de participantes estiver certa, inicie o quiz e o telão muda
+                    para a primeira pergunta do tema escolhido.
                   </p>
                 </div>
                 <button

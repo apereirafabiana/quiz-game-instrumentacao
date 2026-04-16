@@ -13,6 +13,25 @@ import {
   savePlayerSession
 } from "../lib/sessionStorage";
 
+const CONNECTION_COPY = {
+  connecting: {
+    label: "Conectando",
+    badgeClass: "border-sky-300/25 bg-sky-500/12 text-sky-50"
+  },
+  connected: {
+    label: "Conectado",
+    badgeClass: "border-emerald-300/25 bg-emerald-500/12 text-emerald-50"
+  },
+  reconnecting: {
+    label: "Reconectando",
+    badgeClass: "border-amber-300/25 bg-amber-500/12 text-amber-50"
+  },
+  offline: {
+    label: "Sem conexão",
+    badgeClass: "border-rose-300/25 bg-rose-500/12 text-rose-50"
+  }
+};
+
 function MobileLoading({ message }) {
   return (
     <div className="stage-wrap items-center justify-center">
@@ -24,6 +43,16 @@ function MobileLoading({ message }) {
   );
 }
 
+function ConnectionBadge({ status }) {
+  const copy = CONNECTION_COPY[status] ?? CONNECTION_COPY.connecting;
+
+  return (
+    <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${copy.badgeClass}`}>
+      {copy.label}
+    </span>
+  );
+}
+
 export default function PlayerGamePage() {
   const socket = useSocket();
   const navigate = useNavigate();
@@ -31,7 +60,29 @@ export default function PlayerGamePage() {
   const [playerSession, setPlayerSession] = useState(() => getPlayerSession());
   const [playerState, setPlayerState] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [roomErrorMessage, setRoomErrorMessage] = useState("");
+  const [submissionStatus, setSubmissionStatus] = useState("idle");
+  const [submissionErrorMessage, setSubmissionErrorMessage] = useState("");
+  const [connectionStatus, setConnectionStatus] = useState(
+    socket.connected ? "connected" : "connecting"
+  );
+
+  function persistPlayerSession(nextSession) {
+    setPlayerSession((currentSession) => {
+      if (
+        currentSession?.roomCode === nextSession.roomCode &&
+        currentSession?.playerId === nextSession.playerId &&
+        currentSession?.name === nextSession.name &&
+        currentSession?.avatar === nextSession.avatar
+      ) {
+        return currentSession;
+      }
+
+      return nextSession;
+    });
+
+    savePlayerSession(nextSession);
+  }
 
   useEffect(() => {
     const savedSession = getPlayerSession();
@@ -45,8 +96,62 @@ export default function PlayerGamePage() {
   }, [navigate, roomCode]);
 
   useEffect(() => {
+    function handleConnect() {
+      setConnectionStatus("connected");
+    }
+
+    function handleDisconnect() {
+      setConnectionStatus("reconnecting");
+    }
+
+    function handleConnectError() {
+      setConnectionStatus("offline");
+    }
+
+    function handleReconnectAttempt() {
+      setConnectionStatus("reconnecting");
+    }
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("connect_error", handleConnectError);
+    socket.io.on("reconnect_attempt", handleReconnectAttempt);
+    socket.io.on("reconnect_error", handleConnectError);
+
+    return () => {
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("connect_error", handleConnectError);
+      socket.io.off("reconnect_attempt", handleReconnectAttempt);
+      socket.io.off("reconnect_error", handleConnectError);
+    };
+  }, [socket]);
+
+  useEffect(() => {
     if (!playerSession || playerSession.roomCode !== roomCode) {
       return undefined;
+    }
+
+    function syncAnswerState(nextState) {
+      if (nextState.phase === "lobby") {
+        setSelectedAnswer(null);
+        setSubmissionStatus("idle");
+        setSubmissionErrorMessage("");
+        return;
+      }
+
+      if (nextState.player.hasAnsweredCurrentQuestion && nextState.answer) {
+        setSelectedAnswer(nextState.answer.answerIndex);
+        setSubmissionStatus("confirmed");
+        setSubmissionErrorMessage("");
+        return;
+      }
+
+      if (!nextState.player.hasAnsweredCurrentQuestion) {
+        setSelectedAnswer(null);
+        setSubmissionStatus("idle");
+        setSubmissionErrorMessage("");
+      }
     }
 
     function requestPlayerRestore() {
@@ -59,36 +164,52 @@ export default function PlayerGamePage() {
     }
 
     function handleJoinSuccess(payload) {
+      if (payload.roomCode !== roomCode) {
+        return;
+      }
+
       const nextSession = {
         roomCode: payload.roomCode,
         playerId: payload.playerId,
         name: payload.playerName,
         avatar: payload.playerAvatar
       };
-      setPlayerSession(nextSession);
-      savePlayerSession(nextSession);
+
+      persistPlayerSession(nextSession);
+      setRoomErrorMessage("");
+
+      if (payload.playerState) {
+        setPlayerState(payload.playerState);
+        syncAnswerState(payload.playerState);
+      }
     }
 
     function handlePlayerState(nextState) {
-      if (nextState.roomCode !== roomCode || nextState.player.id !== playerSession.playerId) {
+      if (nextState.roomCode !== roomCode) {
+        return;
+      }
+
+      const knownPlayerId = playerSession?.playerId ?? getPlayerSession()?.playerId;
+
+      if (knownPlayerId && nextState.player.id !== knownPlayerId) {
         return;
       }
 
       setPlayerState(nextState);
-      setErrorMessage("");
-      if (!nextState.player.hasAnsweredCurrentQuestion) {
-        setSelectedAnswer(null);
-      }
-      savePlayerSession({
+      setRoomErrorMessage("");
+      syncAnswerState(nextState);
+
+      const nextSession = {
         roomCode: nextState.roomCode,
         playerId: nextState.player.id,
         name: nextState.player.name,
         avatar: nextState.player.avatar
-      });
+      };
+      persistPlayerSession(nextSession);
     }
 
     function handleRoomError(payload) {
-      setErrorMessage(payload.message);
+      setRoomErrorMessage(payload.message);
 
       if (["ROOM_NOT_FOUND", "ROOM_LOCKED", "PLAYER_NOT_FOUND"].includes(payload.code)) {
         clearPlayerSession();
@@ -96,10 +217,21 @@ export default function PlayerGamePage() {
       }
     }
 
+    function handleAnswerReceived(payload) {
+      if (payload.roomCode !== roomCode) {
+        return;
+      }
+
+      setSelectedAnswer(payload.answerIndex ?? selectedAnswer);
+      setSubmissionStatus("confirmed");
+      setSubmissionErrorMessage("");
+    }
+
     socket.on("connect", requestPlayerRestore);
     socket.on("join_success", handleJoinSuccess);
     socket.on("player_state", handlePlayerState);
     socket.on("room_error", handleRoomError);
+    socket.on("answer_received", handleAnswerReceived);
 
     if (socket.connected) {
       requestPlayerRestore();
@@ -110,24 +242,81 @@ export default function PlayerGamePage() {
       socket.off("join_success", handleJoinSuccess);
       socket.off("player_state", handlePlayerState);
       socket.off("room_error", handleRoomError);
+      socket.off("answer_received", handleAnswerReceived);
     };
   }, [navigate, playerSession, roomCode, socket]);
+
+  function sendAnswer(answerIndex) {
+    if (!playerSession) {
+      return;
+    }
+
+    if (!socket.connected) {
+      setSubmissionStatus("error");
+      setSubmissionErrorMessage("Você está sem conexão. Aguarde reconectar e tente novamente.");
+      return;
+    }
+
+    setSelectedAnswer(answerIndex);
+    setSubmissionStatus("sending");
+    setSubmissionErrorMessage("");
+
+    socket.timeout(4500).emit(
+      "submit_answer",
+      {
+        roomCode,
+        playerId: playerSession.playerId,
+        answerIndex
+      },
+      (timeoutError, response) => {
+        if (timeoutError) {
+          setSubmissionStatus("error");
+          setSubmissionErrorMessage(
+            "Não conseguimos confirmar sua resposta a tempo. Toque em “Tentar reenviar”."
+          );
+          return;
+        }
+
+        if (!response?.ok) {
+          setSubmissionStatus("error");
+          setSubmissionErrorMessage(
+            response?.message ?? "O envio falhou. Tente reenviar sua resposta."
+          );
+          return;
+        }
+
+        setSelectedAnswer(response.answer?.answerIndex ?? answerIndex);
+        setSubmissionStatus("confirmed");
+        setSubmissionErrorMessage("");
+      }
+    );
+  }
 
   function handleSubmitAnswer(answerIndex) {
     if (
       !playerSession ||
       playerState?.player.hasAnsweredCurrentQuestion ||
-      playerState?.phase === "answer_reveal"
+      playerState?.phase === "answer_reveal" ||
+      submissionStatus === "sending" ||
+      submissionStatus === "confirmed"
     ) {
       return;
     }
 
-    setSelectedAnswer(answerIndex);
-    socket.emit("submit_answer", {
-      roomCode,
-      playerId: playerSession.playerId,
-      answerIndex
-    });
+    sendAnswer(answerIndex);
+  }
+
+  function handleRetryAnswer() {
+    if (
+      typeof selectedAnswer !== "number" ||
+      !playerSession ||
+      playerState?.player.hasAnsweredCurrentQuestion ||
+      playerState?.phase !== "question"
+    ) {
+      return;
+    }
+
+    sendAnswer(selectedAnswer);
   }
 
   if (!playerSession || playerSession.roomCode !== roomCode) {
@@ -153,6 +342,14 @@ export default function PlayerGamePage() {
 
   return (
     <main className="page-shell">
+      {connectionStatus !== "connected" ? (
+        <div className="fixed left-1/2 top-4 z-20 w-[92vw] max-w-lg -translate-x-1/2 rounded-2xl border border-amber-300/25 bg-amber-500/12 px-4 py-3 text-center text-sm text-amber-50 backdrop-blur-xl">
+          {connectionStatus === "offline"
+            ? "Sem conexão no momento. Vamos restaurar sua partida assim que a internet voltar."
+            : "Reconectando ao quiz... Seu estado será restaurado automaticamente."}
+        </div>
+      ) : null}
+
       {playerState.phase === "lobby" ? (
         <section className="stage-wrap items-center justify-center">
           <motion.div
@@ -164,12 +361,16 @@ export default function PlayerGamePage() {
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] border border-white/10 bg-white/10 text-5xl shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
                 {playerAvatar}
               </div>
-              <p className="muted-label mt-5">Aguardando início</p>
+              <div className="mt-5 flex items-center justify-center gap-3">
+                <p className="muted-label">Aguardando início</p>
+                <ConnectionBadge status={connectionStatus} />
+              </div>
               <h1 className="headline-font mt-4 text-4xl font-black text-white">
                 Olá, {playerState.player.name}
               </h1>
               <p className="mt-4 text-base text-slate-300">
-                Você entrou na sala {playerState.roomCode}. Assim que o professor iniciar, a pergunta aparece aqui.
+                Você entrou na sala {playerState.roomCode}. Assim que o professor iniciar, a
+                pergunta aparece aqui.
               </p>
             </div>
 
@@ -180,7 +381,9 @@ export default function PlayerGamePage() {
               </div>
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
                 <p className="muted-label">Jogadores online</p>
-                <p className="mt-3 text-4xl font-black text-white">{playerState.totalConnectedPlayers}</p>
+                <p className="mt-3 text-4xl font-black text-white">
+                  {playerState.totalConnectedPlayers}
+                </p>
               </div>
               <div className="rounded-[1.7rem] border border-white/10 bg-slate-950/35 p-4 text-center">
                 <p className="muted-label">Tema</p>
@@ -198,9 +401,12 @@ export default function PlayerGamePage() {
         <section className="stage-wrap items-center justify-center">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
             <div className="glass-panel p-4">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <span className="player-badge">Sala {playerState.roomCode}</span>
-                <span className="player-badge">{playerState.player.score} pts</span>
+                <div className="flex items-center gap-3">
+                  <span className="player-badge">{playerState.player.score} pts</span>
+                  <ConnectionBadge status={connectionStatus} />
+                </div>
               </div>
               <div className="mt-4 space-y-4">
                 <div className="flex items-center justify-between gap-4 text-sm text-slate-300">
@@ -229,7 +435,10 @@ export default function PlayerGamePage() {
               hasAnswered={playerState.player.hasAnsweredCurrentQuestion}
               selectedAnswer={playerState.answer?.answerIndex ?? selectedAnswer}
               showCorrectAnswer={playerState.phase === "answer_reveal"}
+              submissionStatus={submissionStatus}
+              submissionErrorMessage={submissionErrorMessage}
               onSubmit={handleSubmitAnswer}
+              onRetrySubmit={handleRetryAnswer}
             />
           </div>
         </section>
@@ -253,9 +462,9 @@ export default function PlayerGamePage() {
         <FinalPodium ranking={playerState.ranking} playerId={playerState.player.id} />
       ) : null}
 
-      {errorMessage ? (
+      {roomErrorMessage ? (
         <div className="fixed bottom-4 left-1/2 z-20 w-[92vw] max-w-lg -translate-x-1/2 rounded-2xl border border-rose-300/25 bg-rose-500/12 px-4 py-3 text-center text-sm text-rose-100 backdrop-blur-xl">
-          {errorMessage}
+          {roomErrorMessage}
         </div>
       ) : null}
     </main>

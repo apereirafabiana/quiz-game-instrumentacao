@@ -70,8 +70,7 @@ export default function PlayerJoinPage() {
       roomCode: normalizedRoomCode,
       name: normalizedName,
       avatar,
-      playerId:
-        savedSession?.roomCode === normalizedRoomCode ? savedSession.playerId : null
+      playerId: savedSession?.roomCode === normalizedRoomCode ? savedSession.playerId : null
     });
   }
 
@@ -89,7 +88,8 @@ export default function PlayerJoinPage() {
               Entre na sala
             </h1>
             <p className="mt-4 text-base text-slate-300">
-              Digite o código exibido no telão, escolha seu avatar e use o nome que vai aparecer para a turma.
+              Digite o código exibido no telão, escolha seu avatar e use o nome que vai aparecer
+              para a turma.
             </p>
           </div>
 

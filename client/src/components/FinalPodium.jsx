@@ -63,7 +63,9 @@ function PodiumColumn({ entry, playerId }) {
           isCurrentPlayer ? "ring-2 ring-brand-cyan" : ""
         }`}
       >
-        <div className={`mx-auto text-5xl drop-shadow-[0_14px_26px_rgba(15,23,42,0.24)] ${style.trophyClass}`}>
+        <div
+          className={`mx-auto text-5xl drop-shadow-[0_14px_26px_rgba(15,23,42,0.24)] ${style.trophyClass}`}
+        >
           {style.trophy}
         </div>
         <div className="mx-auto mt-4 flex h-20 w-20 items-center justify-center rounded-[1.8rem] border border-white/15 bg-white/10 text-5xl shadow-[0_14px_30px_rgba(15,23,42,0.18)]">
@@ -72,7 +74,9 @@ function PodiumColumn({ entry, playerId }) {
         <p className="mt-4 text-xs font-black uppercase tracking-[0.28em] text-slate-100/80">
           {style.label}
         </p>
-        <p className="headline-font mt-3 text-2xl font-black text-white sm:text-3xl">{entry.name}</p>
+        <p className="headline-font mt-3 text-2xl font-black text-white sm:text-3xl">
+          {entry.name}
+        </p>
         <p className="mt-3 text-lg font-black text-white">{entry.score} pts</p>
         <p className="mt-1 text-sm text-slate-200/80">{entry.correctAnswers} acertos</p>
       </motion.div>
@@ -127,7 +131,8 @@ export default function FinalPodium({
           <p className="muted-label">Fim de jogo</p>
           <h1 className="projection-title mt-4">Pódio final</h1>
           <p className="mt-4 text-lg text-slate-200">
-            A partida terminou em clima de competição, com destaque total para os três melhores colocados.
+            A partida terminou em clima de competição, com destaque total para os três melhores
+            colocados.
           </p>
         </div>
 

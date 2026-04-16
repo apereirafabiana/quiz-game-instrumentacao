@@ -6,7 +6,10 @@ export default function PlayerAnswerPanel({
   hasAnswered,
   selectedAnswer,
   showCorrectAnswer = false,
-  onSubmit
+  submissionStatus = "idle",
+  submissionErrorMessage = "",
+  onSubmit,
+  onRetrySubmit
 }) {
   const correctIndex = question.correctIndex;
   const correctLetter =
@@ -25,8 +28,14 @@ export default function PlayerAnswerPanel({
     } else {
       feedbackMessage = `Tempo encerrado. A correta era a alternativa ${correctLetter}.`;
     }
-  } else if (hasAnswered) {
-    feedbackMessage = "Resposta enviada. Agora é só aguardar a correção e o ranking.";
+  } else if (submissionStatus === "sending") {
+    feedbackMessage = "Enviando resposta...";
+  } else if (submissionStatus === "error") {
+    feedbackMessage =
+      submissionErrorMessage ||
+      "Não conseguimos confirmar sua resposta. Tente reenviar.";
+  } else if (submissionStatus === "confirmed" || hasAnswered) {
+    feedbackMessage = "Resposta confirmada. Agora é só aguardar a correção e o ranking.";
   }
 
   return (
@@ -56,9 +65,7 @@ export default function PlayerAnswerPanel({
           <p className="headline-font mt-2 text-2xl font-black text-white">
             Alternativa {correctLetter}
           </p>
-          <p className="mt-3 text-sm text-slate-200">
-            {question.options[correctIndex]}
-          </p>
+          <p className="mt-3 text-sm text-slate-200">{question.options[correctIndex]}</p>
         </div>
       ) : null}
 
@@ -67,14 +74,16 @@ export default function PlayerAnswerPanel({
           const optionStyle = getOptionStyle(index);
           const isSelected = selectedAnswer === index;
           const isCorrect = correctIndex === index;
+          const disableOption =
+            hasAnswered || showCorrectAnswer || submissionStatus === "sending" || submissionStatus === "confirmed" || submissionStatus === "error";
 
           return (
             <motion.button
               key={`${question.id}-${optionStyle.letter}`}
               type="button"
-              whileTap={showCorrectAnswer ? undefined : { scale: 0.98 }}
+              whileTap={disableOption ? undefined : { scale: 0.98 }}
               onClick={() => onSubmit(index)}
-              disabled={hasAnswered || showCorrectAnswer}
+              disabled={disableOption}
               className={`rounded-[1.7rem] border bg-gradient-to-r px-4 py-5 text-left text-base font-bold text-white transition sm:px-5 sm:py-6 sm:text-lg ${optionStyle.gradient} ${
                 showCorrectAnswer
                   ? isCorrect
@@ -82,11 +91,17 @@ export default function PlayerAnswerPanel({
                     : isSelected
                       ? "border-white/30 ring-1 ring-white/30 opacity-55"
                       : "border-white/10 opacity-40"
-                  : isSelected
-                    ? "border-white/80 shadow-neon"
-                    : "border-white/10 hover:border-white/25"
+                  : submissionStatus === "error" && isSelected
+                    ? "border-amber-200/60 ring-1 ring-amber-200/50"
+                    : isSelected
+                      ? "border-white/80 shadow-neon"
+                      : "border-white/10 hover:border-white/25"
               } ${
-                !showCorrectAnswer && hasAnswered && !isSelected ? "opacity-60" : "opacity-100"
+                !showCorrectAnswer &&
+                (submissionStatus === "confirmed" || hasAnswered) &&
+                !isSelected
+                  ? "opacity-60"
+                  : "opacity-100"
               }`}
             >
               <div className="flex items-center gap-4">
@@ -102,6 +117,14 @@ export default function PlayerAnswerPanel({
         })}
       </div>
 
+      {submissionStatus === "error" && !showCorrectAnswer && typeof selectedAnswer === "number" ? (
+        <div className="flex justify-center">
+          <button type="button" onClick={onRetrySubmit} className="secondary-button">
+            Tentar reenviar
+          </button>
+        </div>
+      ) : null}
+
       <motion.div
         initial={false}
         animate={{ opacity: 1, scale: 1 }}
@@ -110,7 +133,11 @@ export default function PlayerAnswerPanel({
             ? "border-emerald-300/30 bg-emerald-500/12 text-emerald-50"
             : showCorrectAnswer
               ? "border-amber-300/25 bg-amber-500/10 text-amber-50"
-              : "border-white/10 bg-white/10 text-slate-100"
+              : submissionStatus === "error"
+                ? "border-amber-300/25 bg-amber-500/10 text-amber-50"
+                : submissionStatus === "sending"
+                  ? "border-sky-300/20 bg-sky-500/10 text-sky-50"
+                  : "border-white/10 bg-white/10 text-slate-100"
         }`}
       >
         {feedbackMessage}

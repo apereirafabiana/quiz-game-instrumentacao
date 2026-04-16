@@ -105,12 +105,13 @@ export default function TeacherPage() {
   const visibleJoinUrl = formatJoinUrl(joinUrl);
 
   const networkHint = visibleJoinUrl
-    ? `Se o QR não abrir, digite ${visibleJoinUrl} no celular. Professor e alunos precisam estar no mesmo Wi-Fi; se ainda falhar, libere a porta 5173 no firewall do Windows.`
+    ? `Se o QR não abrir, digite ${visibleJoinUrl} no celular. Professor e alunos precisam estar no mesmo Wi-Fi; se ainda falhar no uso local, libere a porta 5173 no firewall do Windows.`
     : "Professor e alunos precisam estar no mesmo Wi-Fi para entrar na sala em tempo real.";
 
   const isLastQuestion =
     teacherState?.question &&
     teacherState.question.number === teacherState.question.totalQuestions;
+  const canResetQuiz = Boolean(teacherState && teacherState.phase !== "lobby");
 
   function handleStartQuiz() {
     socket.emit("start_quiz", { roomCode: teacherState.roomCode });
@@ -132,6 +133,18 @@ export default function TeacherPage() {
   }
 
   function handleRestart() {
+    if (!teacherState) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Resetar o quiz agora? A sala será mantida, o mesmo tema continuará selecionado e o placar de todos será zerado."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     socket.emit("restart_quiz", { roomCode: teacherState.roomCode });
   }
 
@@ -156,6 +169,7 @@ export default function TeacherPage() {
               networkHint={networkHint}
               selectedTheme={teacherState.selectedTheme}
               availableThemes={teacherState.availableThemes}
+              themeQuestionCounts={teacherState.themeQuestionCounts}
               onSelectTheme={handleSelectTheme}
               onStartQuiz={handleStartQuiz}
               canStartQuiz={teacherState.canStartQuiz}
@@ -202,6 +216,18 @@ export default function TeacherPage() {
           ) : null}
         </AnimatePresence>
       )}
+
+      {canResetQuiz ? (
+        <div className="fixed right-4 top-4 z-20 sm:right-6 sm:top-6">
+          <button
+            type="button"
+            onClick={handleRestart}
+            className="rounded-full border border-rose-300/30 bg-rose-500/15 px-5 py-3 text-sm font-bold text-rose-50 shadow-[0_18px_35px_rgba(244,63,94,0.18)] backdrop-blur-xl transition hover:border-rose-200/50 hover:bg-rose-500/20"
+          >
+            Resetar quiz
+          </button>
+        </div>
+      ) : null}
 
       {errorMessage ? (
         <div className="fixed bottom-4 left-1/2 z-20 w-[92vw] max-w-lg -translate-x-1/2 rounded-2xl border border-rose-300/25 bg-rose-500/12 px-4 py-3 text-center text-sm text-rose-100 backdrop-blur-xl">

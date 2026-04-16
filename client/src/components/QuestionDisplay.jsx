@@ -87,7 +87,6 @@ export default function QuestionDisplay({
                 <p className="headline-font mt-3 text-2xl font-black text-white sm:text-3xl">
                   Alternativa {correctLetter}
                 </p>
-
               </div>
             ) : (
               <TimerBar deadlineAt={question.deadlineAt} durationMs={question.durationMs} />

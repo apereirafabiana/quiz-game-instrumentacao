@@ -15,6 +15,11 @@ function getSharedSocket() {
   if (!sharedSocket) {
     sharedSocket = io(getSocketBaseUrl(), {
       autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 700,
+      reconnectionDelayMax: 2500,
+      timeout: 5000,
       path: "/socket.io",
       transports: ["websocket", "polling"]
     });

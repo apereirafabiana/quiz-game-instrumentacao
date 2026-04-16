@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { DEFAULT_AVATAR } from "../../../shared/avatarOptions.js";
 
 export default function ConnectedPlayersList({ players }) {
+  const connectedPlayersCount = players.filter((player) => player.connected).length;
+
   return (
     <div className="glass-panel p-5 sm:p-6">
       <div className="flex items-center justify-between gap-4">
@@ -11,7 +13,7 @@ export default function ConnectedPlayersList({ players }) {
             Jogadores conectados
           </h3>
         </div>
-        <span className="player-badge">{players.length} online</span>
+        <span className="player-badge">{connectedPlayersCount} online</span>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
