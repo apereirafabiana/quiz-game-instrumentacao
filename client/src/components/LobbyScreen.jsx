@@ -59,7 +59,7 @@ export default function LobbyScreen({
                 </span>
               </div>
 
-              <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {availableThemes.map((theme) => {
                   const isSelected = theme === selectedTheme;
                   const questionCount = themeQuestionCounts?.[theme] ?? 0;
